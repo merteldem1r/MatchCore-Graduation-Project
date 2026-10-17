@@ -21,6 +21,20 @@ Graduation project · Computer Engineering · Istanbul Medeniyet University · 2
 | Server | Reads engine output, serves metrics | Go | [`src/server`](src/server) | [`docs/application/server`](docs/application/server) |
 | Client | Read-only web dashboard | Web | [`src/client`](src/client) | [`docs/application/client`](docs/application/client) |
 
+## Documents
+
+| Document | What it is about | Link |
+| --- | --- | --- |
+| Steps | The project's story: the idea, what we learned and the big decisions, one document per step | [`docs/steps/`](docs/steps/) |
+| System overview | What the system is, its components and scope | [`docs/application/README.md`](docs/application/README.md) |
+| Roadmap | Planned versions of the software and the main milestones | [`docs/application/ROADMAP.md`](docs/application/ROADMAP.md) |
+| Component docs | Design and status of each component (engine, server, client) | [`docs/application/`](docs/application/) |
+| Research | Literature, similar projects and data sources | [`docs/research/`](docs/research/) |
+| Project state | Where the project is right now and what comes next | [`docs/memory/project-state.md`](docs/memory/project-state.md) |
+| Decision log | Every important decision, with the reason and the alternatives | [`docs/memory/decisions.md`](docs/memory/decisions.md) |
+| Rules | How we work: collaboration, academic integrity, git | [`docs/rules/`](docs/rules/) |
+| Graduation project | University guidelines, deadlines, templates and our submissions | [`docs/graduation-project/`](docs/graduation-project/) |
+
 ## Repository structure
 
 ```text
