@@ -15,33 +15,40 @@
 Graduation-Project-CENG/
 ├── README.md                 ← project overview, current status, map of the repo
 ├── AGENTS.md                 ← instructions for AI coding agents (Claude, Codex, …)
-├── CLAUDE.md                 ← imports AGENTS.md (Claude Code reads this file)
-├── .claude/skills/           ← /step and /wrap-up workflows
+├── CLAUDE.md                 ← imports AGENTS.md + Claude-only notes
+├── .claude/
+│   ├── settings.json         ← denies git add/commit/push for Claude
+│   └── skills/               ← /step and /wrap-up workflows
 │
 ├── docs/
 │   ├── README.md             ← index of all documentation
 │   ├── steps/                ← the project's story, one numbered document per step
+│   │   ├── README.md         ← step list + status (the only place it's tracked)
 │   │   ├── 01-project-idea.md
 │   │   ├── 02-how-an-exchange-works.md
 │   │   ├── 03-name-and-repo-structure.md
 │   │   └── interactive/      ← HTML versions of steps (e.g. the order-book simulator)
-│   ├── application/          ← about the software itself
-│   │   ├── README.md         ← what the system is: components, scope, version history
-│   │   ├── PLAN.md           ← the step plan with target dates and status
-│   │   └── resources.md      ← research material, similar projects, references
+│   ├── application/          ← about the software itself (living docs)
+│   │   ├── README.md         ← what the system is: components, scope
+│   │   ├── ROADMAP.md        ← versions v1 → v5 + milestones
+│   │   ├── engine/           ← README (status) + vN-design.md + benchmarks.md, as they are written
+│   │   ├── server/
+│   │   └── client/
+│   ├── research/             ← literature, similar projects, data sources (resources.md)
 │   ├── memory/               ← shared project state for AI agents (and humans)
 │   │   ├── project-state.md  ← where we are, what's next, open questions
 │   │   └── decisions.md      ← decision log: what, when, why, alternatives
 │   ├── rules/                ← conventions every contributor/agent follows
 │   │   ├── collaboration.md  ← how we work (step by step, simple first…)
-│   │   └── academic.md       ← academic integrity, data/ethics, writing rules
+│   │   ├── academic.md       ← academic integrity, data/ethics, writing rules
+│   │   └── git-and-recap.md  ← only the student uses git; recap after every change
 │   └── graduation-project/   ← university material
 │       ├── README.md         ← deadlines + what each document asks for
 │       ├── guidelines/       ← official guidelines and calendar
 │       ├── templates/        ← official .docx templates (unchanged)
 │       └── submissions/      ← our filled-in forms (proposal, interim report, thesis)
 │
-└── src/                      ← code (not started; nothing is written before step 07)
+└── src/                      ← code (not started); READMEs hold build/run instructions only
     ├── engine/               ← C++ matching engine (the core)
     ├── server/               ← Go service: reads engine output, serves the dashboard
     └── client/               ← web dashboard (read-only)
@@ -50,11 +57,21 @@ Graduation-Project-CENG/
 **Why it is laid out this way**
 
 - **Separation of concerns.** `steps/` is *the journey* (learning + decisions over time). `application/` is *the product* (what the system is now). `graduation-project/` is *the university side* (rules, templates, our submissions). `memory/` + `rules/` are *context for agents*.
-- **One place for each kind of information**, so nothing has to be updated in two places:
-  - deadlines → `graduation-project/README.md`
-  - step plan and status → `application/PLAN.md`
-  - current state → `memory/project-state.md`
-  - decisions → `memory/decisions.md`
+- **One question → one home.** Every kind of information has exactly one file; other places only link to it, so nothing drifts:
+
+  | Question | Single home |
+  | --- | --- |
+  | Where are we right now? | `memory/project-state.md` (rewritten each session, < ~40 lines) |
+  | Why did we choose X? | `memory/decisions.md` (one shared log with an Area column) |
+  | What did we learn / how did we get here? | `steps/NN-*.md` |
+  | Which steps, what status? | `steps/README.md` |
+  | What is the system? Which versions, when? | `application/README.md`, `application/ROADMAP.md` |
+  | How does the engine / server / client work? | `application/<component>/` |
+  | How to build and run the code? | `src/<component>/README.md` |
+  | Which sources and similar projects? | `research/` |
+  | University deadlines and forms? | `graduation-project/` |
+
+- **Memory stays abstract.** It only says *where we are* and *what we decided*, never component details, because it is loaded in every session.
 - **`src/` grows only when needed.** Build files, tests and benchmarks are added in the step where they are first needed, not upfront.
 
 ### How AI context is organized (four layers)
@@ -68,7 +85,7 @@ Graduation-Project-CENG/
 
 The **repository is the source of truth** for project memory (`docs/memory/`): versioned, readable by any tool or person. Rules live in `docs/rules/` (not `.claude/rules/`) so they work for every AI tool. Path-scoped Claude rules (e.g. for `src/engine/`) can be added once code exists.
 
-**Daily routine:** `/step` → discuss → step document → `/wrap-up` → commit.
+**Daily routine:** `/step` → discuss → step document → `/wrap-up` → recap + suggested git commands → the student commits.
 
 **Small fixes made**
 
@@ -81,7 +98,7 @@ The **repository is the source of truth** for project memory (`docs/memory/`): v
 
 ### Codename: **MatchCore** ✅
 
-Chosen on 2026-10-17: *the core that matches orders*, which says exactly what the project is. Note: an open-source Rust crate named `matchcore` exists (a deterministic price-time matching engine). Ours is an independent C++ project; the crate is listed in `resources.md` as a similar project to study and cite.
+Chosen on 2026-10-17: *the core that matches orders*, which says exactly what the project is. Note: an open-source Rust crate named `matchcore` exists (a deterministic price-time matching engine). Ours is an independent C++ project; the crate is listed in `docs/research/resources.md` as a similar project to study and cite.
 
 ### Codename brainstorm (for the record)
 
@@ -127,6 +144,8 @@ Turkish terms used: *emir* = order, *emir defteri* = order book, *eşleştirme m
 - Step documents live in `docs/steps/`; HTML versions are kept in `docs/steps/interactive/`.
 - `docs/memory/` and `docs/rules/` are context for AI agents; four-layer setup with `/step` and `/wrap-up` skills.
 - Codename: **MatchCore**.
+- Only the student uses git; Claude is technically blocked from `git add` / `commit` / `push`.
+- One question → one home (table above).
 
 ## Open questions
 

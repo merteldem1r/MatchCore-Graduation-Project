@@ -1,5 +1,4 @@
-# Engine (C++)
+# src/engine
 
-The core matching engine: order book, price-time matching, event log, snapshots, replay.
-
-**Not started.** It is designed in step 07 and first written after the proposal. See [`../../docs/application/PLAN.md`](../../docs/application/PLAN.md).
+Build, run and test instructions will go here once code exists.
+Design and status: [`docs/application/engine/`](../../docs/application/engine/).

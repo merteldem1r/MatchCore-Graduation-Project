@@ -4,7 +4,7 @@ Rules for everyone working on this repository, human or AI agent.
 
 ## Pace and scope
 
-1. **Step by step.** One step at a time, in the order of [`../application/PLAN.md`](../application/PLAN.md). Finish, document and check in before starting the next.
+1. **Step by step.** One step at a time, in the order of [`../steps/README.md`](../steps/README.md). Finish, document and check in before starting the next.
 2. **Simplest version first.** Build the simplest *correct* version, then improve it in measured upgrades (v1 → v2 → …). Advanced options are presented as later upgrades, not as the starting point.
 3. **Understand before building.** Explain concepts from first principles, with small worked examples. No code is written until the design step for it is done and the student asks for it.
 4. **No one-shot generation.** Never scaffold or generate large parts of the project at once.
@@ -13,7 +13,7 @@ Rules for everyone working on this repository, human or AI agent.
 
 5. Every step ends with a document in [`../steps/`](../steps/) (skeleton in `steps/README.md`).
 6. After each session, update [`../memory/project-state.md`](../memory/project-state.md). Log decisions in [`../memory/decisions.md`](../memory/decisions.md).
-7. Daily routine: `/step` to work on a step, `/wrap-up` to close the session.
+7. Daily routine: start a step → discuss → write the step document → wrap up (update project state, decisions, statuses) → the student commits.
 8. Long explanations can also get an interactive HTML version in `steps/interactive/`; the Markdown version is the main one.
 
 ## Git

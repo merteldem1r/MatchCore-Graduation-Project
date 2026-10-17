@@ -2,18 +2,35 @@
 
 This folder is the project's story, told one step at a time. Each numbered document covers one step: what we learned, what we decided, and what comes next. Read them in order to see how the project grew from an idea into a system.
 
-| # | Step | Status | Interactive version |
-| --- | --- | --- | --- |
-| 01 | [Project idea](01-project-idea.md) | Done (2026-10-16) | [kickoff page](interactive/01-project-kickoff.html) |
-| 02 | [How an exchange works](02-how-an-exchange-works.md) | Done (2026-10-17) | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
-| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | Done (2026-10-17) | — |
-| 04 | Why this is a computer engineering problem | Next | — |
-| 05 | Similar projects & research material | Planned | — |
-| 06 | Tech stack | Planned | — |
-| 07 | Scope, architecture & v1 design | Planned | — |
-| 08 | Proposal form (final title + two-semester timeline) | Planned (must be sent by 2026-11-01) | — |
+## What a step is (and isn't)
 
-The full plan with target dates is in [`../application/PLAN.md`](../application/PLAN.md).
+Steps are **high-level and project-wide**: the milestones in *understanding* the problem and the *big decisions* we make together. They are never about a single component or feature.
+
+| ✅ Belongs in a step | ❌ Does not belong in a step → where it goes instead |
+| --- | --- |
+| Understanding a new topic (how exchanges work, what latency means) | Design of a component or version → `docs/application/<component>/` |
+| A project-wide decision (name, tech stack, scope, how we measure) | Feature progress, bugs, small changes → component README + git history |
+| A turning point (proposal sent, first version working, interim report) | Build / run instructions → `src/<component>/README.md` |
+| A short summary + link when a step leads to a design | The full design text (written once, in `application/`) |
+
+**Test before creating a new step:** *Will this still matter when explaining the project's story to the jury?* If not, it isn't a step.
+
+## Step list
+
+**This table is the single place where step status is tracked.** Target dates are set so the proposal is sent by **2026-11-01**, with a few days' buffer for advisor feedback.
+
+| # | Step | Target | Status | Interactive version |
+| --- | --- | --- | --- | --- |
+| 01 | [Project idea](01-project-idea.md) | 2026-10-16 | ✅ Done | [kickoff page](interactive/01-project-kickoff.html) |
+| 02 | [How an exchange works](02-how-an-exchange-works.md) | 2026-10-17 | ✅ Done | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
+| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | 2026-10-17 | ✅ Done | — |
+| 04 | Why this is a computer engineering problem | 2026-10-19 | ⏭ Next | — |
+| 05 | Similar projects & research material | 2026-10-21 | ⬜ | — |
+| 06 | Tech stack | 2026-10-22 | ⬜ | — |
+| 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | 2026-10-24 | ⬜ | — |
+| 08 | Proposal form: final title, two-semester timeline | draft 10-27 · send by 10-30 | ⬜ | — |
+
+Midterm week: 2026-11-02 → 11-08. Steps after 08 are added here as they are planned. The product's version plan is in [`../application/ROADMAP.md`](../application/ROADMAP.md).
 
 ## How a step document is written
 
@@ -21,6 +38,7 @@ The full plan with target dates is in [`../application/PLAN.md`](../application/
 - Language: English. The official university submissions are written in Turkish separately (see `../graduation-project/submissions/`).
 - Dates: ISO format, `YYYY-MM-DD`.
 - Interactive HTML versions, if a step has one, go in `interactive/` under the same number.
+- A step records the **discussion and decisions**. If it produces a design (e.g. the v1 engine design), the design itself goes in `docs/application/<component>/`, and the step document links to it.
 
 Every step document uses this skeleton:
 

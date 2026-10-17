@@ -3,7 +3,7 @@
 ## Data and code
 
 1. **No proprietary material.** No code, data, documents or internal designs from any current or previous employer. Not even "from memory" reconstructions of internal systems.
-2. **Data**: synthetic workloads we generate, or openly licensed public data. Check and record the license in [`../application/resources.md`](../application/resources.md).
+2. **Data**: synthetic workloads we generate, or openly licensed public data. Check and record the license in [`../research/resources.md`](../research/resources.md).
 3. **Third-party code**: only with a compatible license, clearly credited. The core matching engine is our own work.
 
 ## Writing (proposal, interim report, thesis)

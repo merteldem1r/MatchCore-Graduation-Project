@@ -1,5 +1,4 @@
-# Client (Web dashboard)
+# src/client
 
-Read-only visualization of order book depth, trades and latency metrics.
-
-**Not started.** See [`../../docs/application/PLAN.md`](../../docs/application/PLAN.md).
+Build, run and test instructions will go here once code exists.
+Design and status: [`docs/application/client/`](../../docs/application/client/).

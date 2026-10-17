@@ -5,7 +5,8 @@ description: Start or continue a MatchCore project step (one numbered document i
 
 # Step
 
-1. **Find the step.** Read `docs/application/PLAN.md` and the "Next step" section of the latest `docs/steps/NN-*.md`. Tell the student which step this is and its goal, in 1–2 sentences.
+1. **Find the step.** Read `docs/steps/README.md` and the "Next step" section of the latest `docs/steps/NN-*.md`. Tell the student which step this is and its goal, in 1–2 sentences.
+   Steps are **high-level and project-wide** (understanding + big decisions), never per component or feature; see "What a step is" in `docs/steps/README.md`. Component and feature details go to `docs/application/<component>/`.
 2. **Ask before acting.** If anything is unclear, ask the student first.
 3. **Explain from first principles.** Start with the simplest version and use small worked examples. Discuss and let the student decide; don't push to conclusions. For long explanations, offer an HTML version in `docs/steps/interactive/NN-name.html`.
 4. **Write the step document** once the student agrees: `docs/steps/NN-short-name.md`, using the skeleton in `docs/steps/README.md`.

@@ -20,6 +20,6 @@ Current step and next actions: [`docs/memory/project-state.md`](docs/memory/proj
 ## Documentation
 
 - [**Steps**](docs/steps/): the project explained step by step, from the idea onward
-- [Plan](docs/application/PLAN.md) · [System overview](docs/application/README.md) · [Resources](docs/application/resources.md)
+- [System overview](docs/application/README.md) · [Roadmap](docs/application/ROADMAP.md) · [Research](docs/research/)
 - [Graduation project rules, deadlines & templates](docs/graduation-project/README.md)
 - [All documentation](docs/README.md)
