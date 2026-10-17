@@ -6,6 +6,7 @@
 
 @docs/rules/collaboration.md
 @docs/rules/academic.md
+@docs/rules/git-and-recap.md
 
 ## Where we are now
 

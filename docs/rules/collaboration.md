@@ -18,7 +18,7 @@ Rules for everyone working on this repository, human or AI agent.
 
 ## Git
 
-9. Commit or push only when the student asks. Write clear commit messages.
+9. Agents never add, commit or push; the student does. After every change: a short recap + suggested git commands. See [`git-and-recap.md`](git-and-recap.md).
 
 ## Code (once it starts)
 

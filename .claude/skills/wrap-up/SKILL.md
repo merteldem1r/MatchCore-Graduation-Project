@@ -8,4 +8,4 @@ description: End-of-session bookkeeping for MatchCore. Updates project state, th
 1. `docs/memory/project-state.md`: update **Last updated**, **Current step**, **Done**, **Next actions**, **Open questions**.
 2. `docs/memory/decisions.md`: append any new decisions (next `D` number, date, why, alternatives, step link).
 3. `docs/application/PLAN.md` and `docs/steps/README.md`: update the status columns.
-4. Show the student a short summary of what changed, plus a suggested commit message. **Commit only if the student says so.**
+4. Finish with the recap and the suggested `git add` / `git commit` commands from `docs/rules/git-and-recap.md`. **Never run git add, commit or push yourself.**
