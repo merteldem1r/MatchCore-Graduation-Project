@@ -16,7 +16,7 @@ case "$header" in
 esac
 
 if ! printf '%s\n' "$header" | grep -Eq "^($TYPES)(\([a-z0-9-]+\))?!?: [^ ]"; then
-  echo "✗ Commit message does not follow the format:  type(scope): description"
+  echo "Error: Commit message does not follow the format:  type(scope): description"
   echo "  got:     $header"
   echo "  types:   $TYPES"
   echo "  example: docs: add step 04 on latency"
@@ -25,7 +25,7 @@ if ! printf '%s\n' "$header" | grep -Eq "^($TYPES)(\([a-z0-9-]+\))?!?: [^ ]"; th
 fi
 
 if [ "${#header}" -gt "$MAX_LENGTH" ]; then
-  echo "✗ Commit message header is ${#header} characters; the limit is $MAX_LENGTH."
+  echo "Error: Commit message header is ${#header} characters; the limit is $MAX_LENGTH."
   echo "  got: $header"
   exit 1
 fi

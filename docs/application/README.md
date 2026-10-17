@@ -10,11 +10,11 @@ Receives buy/sell orders for an instrument, keeps them in an **order book**, and
 
 ```text
  order input            ┌────────────────────────┐           ┌──────────────┐     ┌──────────────┐
- (file / generator) ──▶ │  Matching engine (C++) │ ──events─▶│ Server (Go)  │ ──▶ │ Client (web) │
+ (file / generator) ──> │  Matching engine (C++) │ ──events─>│ Server (Go)  │ ──> │ Client (web) │
                         │  order book + matching │           │ metrics, API │     │ dashboard,   │
                         └───────────┬────────────┘           └──────────────┘     │ read-only    │
                                     │ event log + snapshots                       └──────────────┘
-                                    ▼
+                                    v
                               disk (replay after crash)
 ```
 

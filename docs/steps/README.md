@@ -6,7 +6,7 @@ This folder is the project's story, told one step at a time. Each numbered docum
 
 Steps are **high-level and project-wide**: the milestones in *understanding* the problem and the *big decisions* we make together. They are never about a single component or feature.
 
-| ✅ Belongs in a step | ❌ Does not belong in a step → where it goes instead |
+| Belongs in a step | Does not belong in a step → where it goes instead |
 | --- | --- |
 | Understanding a new topic (how exchanges work, what latency means) | Design of a component or version → `docs/application/<component>/` |
 | A project-wide decision (name, tech stack, scope, how we measure) | Feature progress, bugs, small changes → component README + git history |
@@ -21,14 +21,14 @@ Steps are **high-level and project-wide**: the milestones in *understanding* the
 
 | # | Step | Target | Status | Interactive version |
 | --- | --- | --- | --- | --- |
-| 01 | [Project idea](01-project-idea.md) | 2026-10-16 | ✅ Done | [kickoff page](interactive/01-project-kickoff.html) |
-| 02 | [How an exchange works](02-how-an-exchange-works.md) | 2026-10-17 | ✅ Done | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
-| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | 2026-10-17 | ✅ Done | — |
-| 04 | Why this is a computer engineering problem | 2026-10-19 | ⏭ Next | — |
-| 05 | Similar projects & research material | 2026-10-21 | ⬜ | — |
-| 06 | Tech stack | 2026-10-22 | ⬜ | — |
-| 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | 2026-10-24 | ⬜ | — |
-| 08 | Proposal form: final title, two-semester timeline | draft 10-27 · send by 10-30 | ⬜ | — |
+| 01 | [Project idea](01-project-idea.md) | 2026-10-16 | Done | [kickoff page](interactive/01-project-kickoff.html) |
+| 02 | [How an exchange works](02-how-an-exchange-works.md) | 2026-10-17 | Done | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
+| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | 2026-10-17 | Done | — |
+| 04 | Why this is a computer engineering problem | 2026-10-19 | Next | — |
+| 05 | Similar projects & research material | 2026-10-21 | Planned | — |
+| 06 | Tech stack | 2026-10-22 | Planned | — |
+| 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | 2026-10-24 | Planned | — |
+| 08 | Proposal form: final title, two-semester timeline | draft 10-27 · send by 10-30 | Planned | — |
 
 Midterm week: 2026-11-02 → 11-08. Steps after 08 are added here as they are planned. The product's version plan is in [`../application/ROADMAP.md`](../application/ROADMAP.md).
 

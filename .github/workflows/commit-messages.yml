@@ -38,5 +38,5 @@ jobs:
               status=1
             fi
           done
-          [ "$status" -eq 0 ] && echo "✓ All new commit messages follow the format."
+          [ "$status" -eq 0 ] && echo "OK: All new commit messages follow the format."
           exit "$status"

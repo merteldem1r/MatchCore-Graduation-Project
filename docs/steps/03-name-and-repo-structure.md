@@ -98,7 +98,7 @@ The **repository is the source of truth** for project memory (`docs/memory/`): v
 
 - The student number and other personal details, and the advisor's private emails (only a summary of the agreed scope is kept). The repository may become public.
 
-### Codename: **MatchCore** ✅
+### Codename: **MatchCore** (chosen)
 
 Chosen on 2026-10-17: *the core that matches orders*, which says exactly what the project is. Note: an open-source Rust crate named `matchcore` exists (a deterministic price-time matching engine). Ours is an independent C++ project; the crate is listed in `docs/research/resources.md` as a similar project to study and cite.
 
@@ -115,7 +115,7 @@ A codename is the short name used for the repository, the code and the presentat
 
 | Codename | Meaning / story | Notes |
 | --- | --- | --- |
-| **Terazi** | Turkish for *scales / balance*. A matching engine literally weighs bids against asks. | Memorable for a Turkish jury; easy logo (⚖). |
+| **Terazi** | Turkish for *scales / balance*. A matching engine literally weighs bids against asks. | Memorable for a Turkish jury; easy logo (a pair of scales). |
 | **Mizan** | *Balance, scale*. In Turkish accounting, *mizan* is the trial balance, a finance connection. | Short, elegant. |
 | **Crossbook** | *Cross* (the moment a buy and sell match) + *order book*. | Descriptive; says what it does. |
 | **Tickforge** | *Tick* (price step) + *forge*: a precisely engineered engine. | Sounds like a tool. |

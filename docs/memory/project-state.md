@@ -13,6 +13,7 @@
 - 03 Name & repository structure: codename **MatchCore**, "one question → one home" docs layout, AI context (rules + state auto-loaded, `/step` and `/wrap-up` skills), git rule (2026-10-17).
 - Repo tooling: Conventional Commits enforced by `.githooks/commit-msg` + a GitHub Actions check; Claude is blocked from `git add` / `commit` / `push` (2026-10-17).
 - Root README rewritten as a high-level overview (components, documents, structure); MIT license added; no-emoji rule (2026-10-17).
+- Removed all emojis from docs and scripts; statuses now use plain words (Done, Next, Planned) (2026-10-17).
 
 ## Components
 
@@ -31,7 +32,6 @@ Engine, server, client: not started. See `docs/application/README.md`.
 | Advisor's full title and name | Proposal form | Waiting on student |
 | Is the interim report required? | Fall planning | Unknown; assume yes |
 | Spring 2027 calendar (thesis deadline) | Spring planning | Not published yet |
-| Replace leftover emojis in older docs (steps README, steps 02 and 03)? | Consistency with the no-emoji rule | Asked, not answered |
 
 ## Context
 

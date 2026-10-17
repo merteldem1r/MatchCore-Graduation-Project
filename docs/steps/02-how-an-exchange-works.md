@@ -44,9 +44,9 @@ This means: *"Buy 100 THYAO, and pay **at most** ₺50.00 per share."*
 
 | Message | Meaning | In v1? |
 | --- | --- | --- |
-| **Limit order** | "Trade at this price or better." If it can't trade right away, it **waits in the book** (it *rests*). | ✅ v1 |
-| **Market order** | "Trade right now at whatever price is available." No price given. It takes the best available prices until it is filled. Whatever can't be filled is cancelled; it never rests. | ✅ v1 |
-| **Cancel** | "Remove my resting order #1042 from the book." | ✅ v1 |
+| **Limit order** | "Trade at this price or better." If it can't trade right away, it **waits in the book** (it *rests*). | Yes (v1) |
+| **Market order** | "Trade right now at whatever price is available." No price given. It takes the best available prices until it is filled. Whatever can't be filled is cancelled; it never rests. | Yes (v1) |
+| **Cancel** | "Remove my resting order #1042 from the book." | Yes (v1) |
 | **Modify / cancel-replace** | "Change my order's price or quantity." Usually treated as cancel + new order, so the order **loses its place in the line**. (Many exchanges let a pure quantity *decrease* keep its place.) | Soon after v1 |
 | **Time-in-force** (IOC, FOK, GTC…) | Extra rules about how long an order lives. IOC = fill what you can immediately, cancel the rest. FOK = fill everything immediately or nothing. GTC = stays until cancelled. | Later |
 | Stop orders, icebergs, auctions | Advanced features of real exchanges. | Out of scope |
