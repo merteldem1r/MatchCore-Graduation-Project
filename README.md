@@ -17,6 +17,16 @@ Current step and next actions: [`docs/memory/project-state.md`](docs/memory/proj
 | Metrics / dashboard backend | Go | [`src/server`](src/server) |
 | Dashboard UI (read-only) | Web | [`src/client`](src/client) |
 
+## Setup
+
+After cloning, enable the commit-message check (once):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Commit messages follow `type(scope): description`; see [`docs/rules/git-and-recap.md`](docs/rules/git-and-recap.md).
+
 ## Documentation
 
 - [**Steps**](docs/steps/): the project explained step by step, from the idea onward

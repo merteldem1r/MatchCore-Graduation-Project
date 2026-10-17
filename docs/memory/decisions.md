@@ -1,6 +1,6 @@
 # Decision Log
 
-> One row per decision, newest at the bottom. **Area**: project · engine · server · client · docs. Big decisions get a short "why" and the alternatives considered, which helps when writing *Materyal ve Yöntem* in the thesis.
+> One row per decision, newest at the bottom. **Area**: project · engine · server · client · docs · repo. Big decisions get a short "why" and the alternatives considered, which helps when writing *Materyal ve Yöntem* in the thesis.
 
 | # | Date | Area | Decision | Why | Alternatives considered | Step |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -14,3 +14,4 @@
 | D8 | 2026-10-17 | docs | Four-layer AI context: AGENTS.md imports rules + project state; `/step` and `/wrap-up` skills; repo is the source of truth | Same context every session, for every tool, kept short | `.claude/rules/` only (Claude-specific) | [03](../steps/03-name-and-repo-structure.md) |
 | D9 | 2026-10-17 | docs | Agents never `git add`/`commit`/`push` (enforced by deny rules in `.claude/settings.json`); recap + suggested commands after every change | Student keeps full control of git history | — | [03](../steps/03-name-and-repo-structure.md) |
 | D10 | 2026-10-17 | docs | "One question → one home": memory = only *now* + decisions; product docs per component in `docs/application/<component>/`; step status only in `steps/README.md`; `PLAN.md` → `application/ROADMAP.md` (versions + milestones); research in `docs/research/`; one shared decision log with an Area column | No duplicated facts, so nothing drifts; memory stays small because it loads every session | Per-component memory files and decision logs | [03](../steps/03-name-and-repo-structure.md) |
+| D11 | 2026-10-17 | repo | Conventional Commits enforced: `type(scope)!: description`, ≤ 100 chars, scope optional; plain shell `commit-msg` hook in `.githooks/` + the same script in a GitHub Actions workflow | Clean, readable history; no dependencies; the hook blocks locally, CI catches anything that slipped through | Husky + commitlint (needs Node), pre-commit framework (needs Python), ≤ 72 chars, required scope | [03](../steps/03-name-and-repo-structure.md) |

@@ -15,4 +15,13 @@
    git commit -m "docs: short summary of the change"
    ```
 
-5. Commit message style: a prefix (`docs:`, `feat:`, `fix:`, `test:`, `chore:`, `refactor:`), then an imperative summary under ~72 characters, e.g. `docs: add step 04 on latency and data structures`.
+## Commit message format (enforced)
+
+5. Messages follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope)!: description`
+   - **type**: `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci` `chore` `revert`
+   - **scope** (optional, lowercase): e.g. `engine`, `server`, `client`, `steps`
+   - **!** (optional): marks a breaking change
+   - **description**: imperative, lowercase start ("add", not "added"); the whole first line is **≤ 100 characters**
+   - Examples: `docs: add step 04 on latency`, `feat(engine): add limit order matching`
+6. Checked by `.githooks/commit-msg` on every commit (the commit is refused if the message is wrong), and again by the **Commit messages** GitHub Actions workflow on every push.
+7. One-time setup after cloning: `git config core.hooksPath .githooks`

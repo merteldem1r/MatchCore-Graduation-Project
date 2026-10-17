@@ -16,6 +16,8 @@ Graduation-Project-CENG/
 ├── README.md                 ← project overview, current status, map of the repo
 ├── AGENTS.md                 ← instructions for AI coding agents (Claude, Codex, …)
 ├── CLAUDE.md                 ← imports AGENTS.md + Claude-only notes
+├── .githooks/commit-msg      ← refuses commits that don't follow type(scope): description
+├── .github/workflows/        ← CI: checks commit messages on every push
 ├── .claude/
 │   ├── settings.json         ← denies git add/commit/push for Claude
 │   └── skills/               ← /step and /wrap-up workflows
@@ -146,6 +148,7 @@ Turkish terms used: *emir* = order, *emir defteri* = order book, *eşleştirme m
 - Codename: **MatchCore**.
 - Only the student uses git; Claude is technically blocked from `git add` / `commit` / `push`.
 - One question → one home (table above).
+- Commit messages follow Conventional Commits (≤ 100 chars), enforced by a git hook + CI.
 
 ## Open questions
 
