@@ -1,4 +1,8 @@
-# MatchCore
+# MatchCore - Order Mathching Engine | Graduation Project
+
+**Author**: Mert Eldemir
+</br>
+**Student NO**: 25120205086
 
 A **low-latency, deterministic order matching engine**: the program at the core of a stock exchange that pairs buy and sell orders by **price-time priority**.
 
