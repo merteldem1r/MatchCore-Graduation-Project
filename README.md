@@ -1,6 +1,4 @@
-# Order Matching Engine — Graduation Project
-
-> *Working title; the codename is still being chosen (see [step 03](docs/steps/03-name-and-repo-structure.md)).*
+# MatchCore
 
 A **low-latency, deterministic order matching engine**: the program at the core of a stock exchange that pairs buy and sell orders by **price-time priority**. The project uses it to compare order-book data structures, measure latency and throughput, and recover exactly from crashes through an event log and deterministic replay. A read-only web dashboard visualizes the order book and latency metrics.
 

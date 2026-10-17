@@ -1,6 +1,6 @@
 # 03 · Project Name & Repository Structure
 
-> **Status:** in progress (structure done, name not chosen yet) · **Date:** 2026-10-17
+> **Status:** done · **Date:** 2026-10-17
 
 ## Goal of this step
 
@@ -16,6 +16,7 @@ Graduation-Project-CENG/
 ├── README.md                 ← project overview, current status, map of the repo
 ├── AGENTS.md                 ← instructions for AI coding agents (Claude, Codex, …)
 ├── CLAUDE.md                 ← imports AGENTS.md (Claude Code reads this file)
+├── .claude/skills/           ← /step and /wrap-up workflows
 │
 ├── docs/
 │   ├── README.md             ← index of all documentation
@@ -56,6 +57,19 @@ Graduation-Project-CENG/
   - decisions → `memory/decisions.md`
 - **`src/` grows only when needed.** Build files, tests and benchmarks are added in the step where they are first needed, not upfront.
 
+### How AI context is organized (four layers)
+
+| Layer | What | Loaded |
+| --- | --- | --- |
+| 1 · Always | `CLAUDE.md` → `AGENTS.md`, which imports `docs/rules/*` and `docs/memory/project-state.md` | Every session. Keep these files **short**, since everything here costs context each time. |
+| 2 · Skills | `.claude/skills/step` (work on a step), `.claude/skills/wrap-up` (end a session) | Only when used |
+| 3 · Reference | `docs/steps/`, `docs/application/`, `docs/graduation-project/` | Only when needed |
+| 4 · Private | Claude's own memory outside the repo | Personal preferences only, never project facts |
+
+The **repository is the source of truth** for project memory (`docs/memory/`): versioned, readable by any tool or person. Rules live in `docs/rules/` (not `.claude/rules/`) so they work for every AI tool. Path-scoped Claude rules (e.g. for `src/engine/`) can be added once code exists.
+
+**Daily routine:** `/step` → discuss → step document → `/wrap-up` → commit.
+
 **Small fixes made**
 
 - `docs/application/resourses.md` → `resources.md` (typo).
@@ -65,7 +79,11 @@ Graduation-Project-CENG/
 
 - The student number and other personal details, and the advisor's private emails (only a summary of the agreed scope is kept). The repository may become public.
 
-### Codename brainstorm
+### Codename: **MatchCore** ✅
+
+Chosen on 2026-10-17: *the core that matches orders*, which says exactly what the project is. Note: an open-source Rust crate named `matchcore` exists (a deterministic price-time matching engine). Ours is an independent C++ project; the crate is listed in `resources.md` as a similar project to study and cite.
+
+### Codename brainstorm (for the record)
 
 A codename is the short name used for the repository, the code and the presentation (like *LMAX*, *Kafka*, *Redis*). The formal title is separate and goes on the forms.
 
@@ -88,7 +106,7 @@ A codename is the short name used for the repository, the code and the presentat
 | **Kestrel** | A small falcon that hovers perfectly still, then strikes fast: precision + speed. | Common name in software. |
 | **Replay** | Hints at deterministic replay, the fault-tolerance idea. | Clever, but a common word. |
 
-*Status: not chosen yet. Add your own ideas to this table.*
+Also considered: QuantCore (rejected: "quant" means the trading-strategy side, sounds like "quantum", and the name is used by several companies), TickCore, BookCore.
 
 ### Formal title drafts (finalized in step 08 with the proposal form)
 
@@ -99,7 +117,7 @@ A codename is the short name used for the repository, the code and the presentat
 3. **EN:** A Low-Latency Order Matching Engine with Deterministic Replay
    **TR:** Deterministik Yeniden Oynatma Destekli Düşük Gecikmeli Emir Eşleştirme Motoru
 
-A codename can be combined with a title: *"Terazi: Design and Performance Analysis of …"*.
+The codename can be combined with a title: *"MatchCore: Design and Performance Analysis of …"*.
 
 Turkish terms used: *emir* = order, *emir defteri* = order book, *eşleştirme motoru* = matching engine, *gecikme* = latency.
 
@@ -107,11 +125,11 @@ Turkish terms used: *emir* = order, *emir defteri* = order book, *eşleştirme m
 
 - Repository structure as above (2026-10-17).
 - Step documents live in `docs/steps/`; HTML versions are kept in `docs/steps/interactive/`.
-- `docs/memory/` and `docs/rules/` are context for AI agents.
+- `docs/memory/` and `docs/rules/` are context for AI agents; four-layer setup with `/step` and `/wrap-up` skills.
+- Codename: **MatchCore**.
 
 ## Open questions
 
-- **Codename**: pick one (or a new idea).
 - **Formal title**: which draft direction feels right? It depends on what we emphasize (performance vs. fault tolerance), which step 07 settles.
 
 ## Next step

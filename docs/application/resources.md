@@ -9,6 +9,7 @@
 | LMAX Architecture: Martin Fowler, 2011, <https://martinfowler.com/articles/lmax.html> | Famous single-threaded, event-sourced exchange design | To read |
 | LMAX Disruptor: <https://github.com/LMAX-Exchange/disruptor> | Low-latency inter-thread messaging; technical paper included | To read |
 | liquibook: open-source C++ order book library | A real C++ matching implementation to compare against | To find & review |
+| `matchcore`: Rust crate, <https://docs.rs/matchcore> | Same name as ours; deterministic, single-threaded, LMAX-inspired price-time engine. Compare and cite | To review |
 | "How to Build a Fast Limit Order Book": WK Selph, 2011 (blog post) | Widely cited write-up on order book data structures | To find |
 
 ## Specifications & data

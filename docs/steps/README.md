@@ -6,7 +6,7 @@ This folder is the project's story, told one step at a time. Each numbered docum
 | --- | --- | --- | --- |
 | 01 | [Project idea](01-project-idea.md) | Done (2026-10-16) | [kickoff page](interactive/01-project-kickoff.html) |
 | 02 | [How an exchange works](02-how-an-exchange-works.md) | Done (2026-10-17) | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
-| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | In progress | — |
+| 03 | [Project name & repository structure](03-name-and-repo-structure.md) | Done (2026-10-17) | — |
 | 04 | Why this is a computer engineering problem | Next | — |
 | 05 | Similar projects & research material | Planned | — |
 | 06 | Tech stack | Planned | — |

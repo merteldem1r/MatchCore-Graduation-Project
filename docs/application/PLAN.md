@@ -8,7 +8,7 @@
 | --- | --- | --- | --- | --- |
 | 01 | Project idea | Topic + agreed scope | 2026-10-16 | ✅ Done |
 | 02 | How an exchange works | Domain understanding | 2026-10-17 | ✅ Done |
-| 03 | Project name & repository structure | Repo layout, codename, title drafts | 2026-10-18 | 🟡 Structure done; name open |
+| 03 | Project name & repository structure | Repo layout, codename, title drafts | 2026-10-17 | ✅ Done |
 | 04 | Why this is a computer engineering problem | "Problem & importance" text for the proposal | 2026-10-19 | ⏭ Next |
 | 05 | Similar projects & research material | Reference list, "similar work" notes | 2026-10-21 | ⬜ |
 | 06 | Tech stack | "Methods & tools" section | 2026-10-22 | ⬜ |

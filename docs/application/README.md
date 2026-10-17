@@ -1,4 +1,4 @@
-# System Overview
+# MatchCore — System Overview
 
 > What the software is and how it is put together. Updated as the design evolves (step 07 onward). For the history of *why*, see [`../steps/`](../steps/).
 

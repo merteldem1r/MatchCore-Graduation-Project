@@ -44,7 +44,6 @@ The advisor approved the topic and suggested this scope, so the project can real
 
 - A full exchange (no user accounts, no real money, no clearing or settlement, no real network gateway in v1).
 - Raft as a core requirement.
-- The alternative idea (comparing quantum vs. classical algorithms for financial matrix computations). The advisor found it interesting but considered it a separate research project, and judged the matching engine more mature, system-oriented and measurable.
 
 ### How this fits the grading
 
@@ -68,7 +67,7 @@ The jury's evaluation form (100 points) gives weight to things a working engine 
 
 ## Decisions
 
-- Topic: order matching engine (alternative idea dropped).
+- Topic: order matching engine.
 - Scope: as in the table above. Raft is optional.
 - Direction for the tech stack (not final until step 06): **C++** for the core engine and its measurements; **Go + a web frontend** for the dashboard side.
 - Working style: step by step, simplest version first.

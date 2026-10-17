@@ -13,13 +13,14 @@ Rules for everyone working on this repository, human or AI agent.
 
 5. Every step ends with a document in [`../steps/`](../steps/) (skeleton in `steps/README.md`).
 6. After each session, update [`../memory/project-state.md`](../memory/project-state.md). Log decisions in [`../memory/decisions.md`](../memory/decisions.md).
-7. Long explanations can also get an interactive HTML version in `steps/interactive/`; the Markdown version is the main one.
+7. Daily routine: `/step` to work on a step, `/wrap-up` to close the session.
+8. Long explanations can also get an interactive HTML version in `steps/interactive/`; the Markdown version is the main one.
 
 ## Git
 
-8. Commit or push only when the student asks. Write clear commit messages.
+9. Commit or push only when the student asks. Write clear commit messages.
 
 ## Code (once it starts)
 
-9. The engine's critical path stays simple, deterministic and measurable. Anything that is not matching (logging to the dashboard, metrics export) must not slow it down.
-10. Every performance claim needs a benchmark that backs it up.
+10. The engine's critical path stays simple, deterministic and measurable. Anything that is not matching (logging to the dashboard, metrics export) must not slow it down.
+11. Every performance claim needs a benchmark that backs it up.
