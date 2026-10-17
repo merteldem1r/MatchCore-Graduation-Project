@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step 02 · How Exchanges Work</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee8; --text: #1d1d1b; --muted: #5f5d57;
+    --border: #e2dfd6; --accent: #2f5bd3; --accent-soft: #e6ecfb;
+    --buy: #1f7a4a; --buy-soft: #e2f3e9; --sell: #b8401f; --sell-soft: #fbe8e1;
+    --amber: #8a6200; --amber-soft: #fbf1d6; --trade: #6b3fd1; --trade-soft: #efe8fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151514; --surface: #1e1e1c; --surface-2: #262623; --text: #ecebe6; --muted: #a6a39b;
+      --border: #34332f; --accent: #8aa8ff; --accent-soft: #232c45;
+      --buy: #7fd3a0; --buy-soft: #1b3125; --sell: #ff9a7a; --sell-soft: #3a231b;
+      --amber: #f2c45a; --amber-soft: #352c14; --trade: #b9a0ff; --trade-soft: #2a2340;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+  .layout { display: grid; grid-template-columns: 230px 1fr; max-width: 1180px; margin: 0 auto; gap: 40px; padding: 32px 24px 80px; }
+  nav { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  nav .brand { font-weight: 700; }
+  nav .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; }
+  nav a:hover { background: var(--surface-2); color: var(--text); }
+  main { min-width: 0; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 21px; margin: 56px 0 8px; scroll-margin-top: 24px; }
+  h2 .num { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  .lead { color: var(--muted); font-size: 17px; margin: 0 0 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .key { background: var(--accent-soft); border-radius: 12px; padding: 14px 18px; margin: 14px 0; }
+  .key b:first-child { color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+  .buy { color: var(--buy); font-weight: 600; } .sell { color: var(--sell); font-weight: 600; } .tr { color: var(--trade); font-weight: 600; }
+  code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+  .muted { color: var(--muted); }
+  .pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); vertical-align: middle; }
+  .pill.v1 { background: var(--buy-soft); color: var(--buy); }
+  .pill.later { background: var(--amber-soft); color: var(--amber); }
+
+  /* order ticket */
+  .ticket { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2); border-radius: 10px; padding: 12px 16px; line-height: 1.8; }
+  .ticket span { color: var(--muted); display: inline-block; width: 92px; }
+
+  /* static mini books */
+  .mini { display: grid; grid-template-columns: 1fr; gap: 0; font-variant-numeric: tabular-nums; font-size: 14px; max-width: 360px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .mini .row { display: grid; grid-template-columns: 70px 80px 1fr; padding: 4px 12px; border-top: 1px solid var(--border); }
+  .mini .row:first-child { border-top: none; }
+  .mini .hdr { font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--surface-2); }
+  .mini .a { background: var(--sell-soft); } .mini .b { background: var(--buy-soft); }
+  .mini .gone { text-decoration: line-through; opacity: .55; }
+  .mini .spread { background: var(--surface); color: var(--muted); font-size: 12.5px; text-align: center; display: block; }
+  .ex { display: grid; grid-template-columns: minmax(0, 360px) 1fr; gap: 20px; align-items: start; }
+  .ex ol, .ex ul { margin: 0; padding-left: 20px; }
+
+  /* tables */
+  table.t { width: 100%; border-collapse: collapse; font-size: 14.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table.t th, table.t td { text-align: left; padding: 10px 14px; border-top: 1px solid var(--border); vertical-align: top; }
+  table.t thead th { border-top: none; background: var(--surface-2); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+
+  /* pipeline */
+  .pipe { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; margin: 10px 0 6px; }
+  .stage { flex: 1 1 120px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; min-width: 120px; }
+  .stage b { display: block; font-size: 14px; }
+  .stage.core { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .arrow { display: grid; place-items: center; color: var(--muted); padding: 0 6px; font-size: 18px; }
+
+  /* simulator */
+  .sim { display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  label { display: block; font-size: 12.5px; color: var(--muted); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border-radius: 8px; padding: 3px; gap: 3px; }
+  .seg button { background: transparent; color: var(--muted); border: 0; padding: 7px; border-radius: 6px; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .seg button.on.b { color: var(--buy); } .seg button.on.s { color: var(--sell); }
+  input[type=number] { width: 100%; font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+  input:disabled { opacity: .45; }
+  .go { width: 100%; margin-top: 14px; font: inherit; font-weight: 700; font-size: 15px; border: 0; border-radius: 8px; padding: 10px; cursor: pointer; color: #fff; background: var(--buy); }
+  .go.s { background: var(--sell); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .go { color: #111; } }
+  .small-btn { font: inherit; font-size: 13px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 5px 10px; cursor: pointer; }
+  .book-live { font-variant-numeric: tabular-nums; font-size: 14px; }
+  .book-live .row { display: grid; grid-template-columns: 54px 74px 64px 70px 1fr; align-items: center; padding: 4px 10px; border-top: 1px solid var(--border); }
+  .book-live .hdr { font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); border-top: none; }
+  .book-live .a { background: var(--sell-soft); } .book-live .b { background: var(--buy-soft); }
+  .book-live .best { font-weight: 700; }
+  .book-live .x { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; justify-self: end; }
+  .book-live .mid { text-align: center; padding: 6px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  .book-live .empty { padding: 6px 10px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  .log { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; max-height: 260px; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; margin-top: 10px; }
+  .log div { padding: 1px 0; }
+  .log .t { color: var(--trade); font-weight: 600; } .log .r { color: var(--muted); }
+  .flash { animation: flash 1.2s ease-out; } @keyframes flash { from { background: var(--trade-soft); } to { background: transparent; } }
+
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 0; }
+  dl.gl { display: grid; grid-template-columns: 170px 1fr; gap: 8px 18px; margin: 0; }
+  dl.gl dt { font-weight: 600; } dl.gl dd { margin: 0; color: var(--muted); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; padding: 20px 16px 60px; gap: 0; }
+    nav { position: static; margin-bottom: 8px; } nav .links { display: flex; flex-wrap: wrap; gap: 2px; }
+    .sim, .ex { grid-template-columns: 1fr; }
+    dl.gl { grid-template-columns: 1fr; } dl.gl dd { margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="brand">Step 02</div>
+    <div class="sub">How an exchange works</div>
+    <div class="links">
+      <a href="#exchange">1.1 · What is an exchange?</a>
+      <a href="#order">1.2 · What is an order?</a>
+      <a href="#book">1.3 · The order book</a>
+      <a href="#matching">1.4 · Matching rules</a>
+      <a href="#examples">1.5 · Worked examples</a>
+      <a href="#play">1.6 · Try it yourself</a>
+      <a href="#events">1.7 · What the engine outputs</a>
+      <a href="#where">1.8 · Where the engine sits</a>
+      <a href="#v1">1.9 · What this means for v1</a>
+      <a href="#glossary">Glossary</a>
+      <a href="#check">Check yourself</a>
+    </div>
+  </nav>
+
+  <main>
+    <h1>How an exchange and an order book actually work</h1>
+    <p class="lead">Before any code or tech stack, you need a clear picture of the problem. This page builds it from zero: what an order is, how an order book is arranged, the rules that decide who trades with whom, and where a matching engine fits in a real exchange.</p>
+
+    <!-- 1.1 -->
+    <h2 id="exchange"><span class="num">1.1</span>What is an exchange?</h2>
+    <div class="card">
+      <p style="margin-top:0">An <b>exchange</b> is a marketplace where buyers and sellers of the same thing meet: shares of a company (e.g. <code>THYAO</code> on Borsa İstanbul, <code>AAPL</code> on NASDAQ), currencies, futures, crypto. Each tradeable thing is called an <b>instrument</b> or <b>symbol</b>.</p>
+      <p>People don't negotiate with each other directly. Everybody sends their wishes to the exchange ("I'll buy at this price", "I'll sell at that price"). The exchange keeps a list of all the wishes that haven't been satisfied yet, and when a buyer and a seller agree on price, it makes them trade.</p>
+      <p style="margin-bottom:0">The program at the center of the exchange that does this pairing is the <b>matching engine</b>. Everything else (websites, broker apps, charts) is built around it.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Who sends orders?</h3>Normal investors don't connect directly. They go through a <b>broker</b> (bank or brokerage app), which forwards their orders to the exchange. Big firms (funds, <b>market makers</b>, HFT firms) connect with low-latency direct connections.</div>
+      <div class="card"><h3>Market makers</h3>Firms that always keep both a buy and a sell order in the book, so anyone who wants to trade has someone to trade with. They earn the small gap between the two prices. That's why they care about speed so much.</div>
+    </div>
+    <div class="key"><b>Key idea:</b> one order book per symbol. A real engine handles thousands of symbols, but each symbol's book is independent. Our v1 can start with <b>a single symbol</b>.</div>
+
+    <!-- 1.2 -->
+    <h2 id="order"><span class="num">1.2</span>What is an order?</h2>
+    <div class="ex">
+      <div class="ticket">
+        <div><span>order_id</span> 1042</div>
+        <div><span>symbol</span> THYAO</div>
+        <div><span>side</span> <b class="buy">BUY</b></div>
+        <div><span>type</span> LIMIT</div>
+        <div><span>price</span> 50.00</div>
+        <div><span>quantity</span> 100</div>
+        <div><span>timestamp</span> 09:00:01.000123</div>
+      </div>
+      <div>
+        <p style="margin-top:0">An order is a small message. It means: <i>"Buy 100 THYAO, and pay <b>at most</b> ₺50.00 per share."</i></p>
+        <ul>
+          <li><b>side</b>: buy or sell.</li>
+          <li><b>price</b>: for a buy it's the <i>maximum</i> you'll pay; for a sell it's the <i>minimum</i> you'll accept.</li>
+          <li><b>quantity</b>: how many shares.</li>
+          <li><b>timestamp / sequence</b>: when the exchange received it. This decides who goes first when two orders have the same price.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px">The messages a trader can send</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Message</th><th>Meaning</th><th>v1?</th></tr></thead>
+      <tbody>
+        <tr><td><b>Limit order</b></td><td>"Trade at this price or better." If it can't trade right away, it <b>waits in the book</b> (it "rests").</td><td><span class="pill v1">v1</span></td></tr>
+        <tr><td><b>Market order</b></td><td>"Trade right now at whatever price is available." No price given. It takes the best prices available until it's filled. Whatever can't be filled is cancelled, never rests.</td><td><span class="pill v1">v1</span></td></tr>
+        <tr><td><b>Cancel</b></td><td>"Remove my resting order #1042 from the book."</td><td><span class="pill v1">v1</span></td></tr>
+        <tr><td><b>Modify / cancel-replace</b></td><td>"Change my order's price or quantity." Usually treated as cancel + new order, so it <b>loses its place in the line</b>. (Many exchanges let a pure quantity <i>decrease</i> keep its place.)</td><td><span class="pill later">soon after</span></td></tr>
+        <tr><td><b>Time-in-force</b> (IOC, FOK, GTC…)</td><td>Extra rules about how long an order lives. IOC = fill what you can immediately, cancel the rest. FOK = fill everything immediately or nothing. GTC = stays until cancelled.</td><td><span class="pill later">later</span></td></tr>
+        <tr><td>Stop orders, icebergs, auctions</td><td>Advanced features of real exchanges.</td><td><span class="pill">out of scope</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 1.3 -->
+    <h2 id="book"><span class="num">1.3</span>The order book</h2>
+    <div class="ex">
+      <div class="mini">
+        <div class="row hdr"><span>Price</span><span>Qty</span><span>Order (arrival)</span></div>
+        <div class="row a"><span class="sell">50.30</span><span>80</span><span>#6 (4th)</span></div>
+        <div class="row a"><span class="sell">50.20</span><span>300</span><span>#4 (1st)</span></div>
+        <div class="row a"><span class="sell">50.10</span><span>50</span><span>#5 (2nd) ← best ask</span></div>
+        <div class="row spread">— spread = 0.10 —</div>
+        <div class="row b"><span class="buy">50.00</span><span>100</span><span>#1 (1st) ← best bid</span></div>
+        <div class="row b"><span class="buy">50.00</span><span>40</span><span>#3 (3rd)</span></div>
+        <div class="row b"><span class="buy">49.90</span><span>200</span><span>#2 (2nd)</span></div>
+      </div>
+      <div>
+        <p style="margin-top:0">The book has two sides:</p>
+        <ul>
+          <li><b class="buy">Bids</b> (buyers), sorted from <b>highest</b> price down. The top one is the <b>best bid</b>.</li>
+          <li><b class="sell">Asks</b> (sellers), sorted from <b>lowest</b> price up. The top one is the <b>best ask</b>.</li>
+        </ul>
+        <p>The gap between best bid and best ask is the <b>spread</b>. In a normal resting book, best bid &lt; best ask. If they overlapped, those orders would already have traded.</p>
+        <p style="margin-bottom:0">All orders at the same price form a <b>price level</b>. Inside a level, orders wait in a <b>FIFO queue</b> (first in, first out), like a line at a bank. Level 50.00 above holds #1 then #3.</p>
+      </div>
+    </div>
+    <div class="key"><b>Key idea:</b> this is where data structures come in. You need (1) the sides sorted by price, (2) a FIFO queue inside each price level, and (3) a fast way to find order #1042 when someone cancels it. These are the three parts your advisor wants you to compare.</div>
+    <div class="card"><b>Tick size:</b> prices can't be anything. They move in fixed steps called <b>ticks</b> (e.g. ₺0.01). So engines usually store price as an <b>integer number of ticks</b> (50.00 → 5000) instead of a float. That avoids rounding bugs, and it's what makes the "array of price levels" idea possible later.</div>
+
+    <!-- 1.4 -->
+    <h2 id="matching"><span class="num">1.4</span>The matching rules</h2>
+    <div class="grid2">
+      <div class="card"><h3>1 · When do two orders trade?</h3>When a buyer's price ≥ a seller's price. We say the orders <b>cross</b>. A new buy at 50.10 crosses the ask at 50.10; a buy at 50.05 does not.</div>
+      <div class="card"><h3>2 · Price priority</h3>A new order always trades against the <b>best</b> price on the other side first. A buyer gets the cheapest seller; a seller gets the highest buyer.</div>
+      <div class="card"><h3>3 · Time priority</h3>At the same price, the order that <b>arrived first</b> trades first (FIFO). Rules 2 + 3 together = <b>price-time priority</b>.</div>
+      <div class="card"><h3>4 · Trade price</h3>The trade happens at the price of the order that was <b>already resting</b> in the book (the <b>maker</b>). The newcomer (the <b>taker</b>) may get a better price than it asked for.</div>
+      <div class="card"><h3>5 · Partial fills</h3>Quantities don't have to match. If you buy 120 and the best seller has 50, you trade 50, then continue with the next seller. Leftover on a limit order rests in the book.</div>
+      <div class="card"><h3>6 · Determinism</h3>Given the same orders in the same sequence, the engine must produce <b>exactly</b> the same trades every time. No randomness and no dependence on timing. This is what makes replay-based recovery possible.</div>
+    </div>
+
+    <!-- 1.5 -->
+    <h2 id="examples"><span class="num">1.5</span>Worked examples</h2>
+    <p class="muted">All start from the book in 1.3.</p>
+
+    <div class="card"><h3>Example A · No trade</h3>
+      <div class="ex"><div class="ticket"><div><b class="buy">BUY</b> LIMIT 30 @ 50.05</div></div>
+      <div>50.05 &lt; best ask 50.10, so nothing crosses. The order <b>rests</b> as the new best bid at 50.05, and the spread shrinks to 0.05. No trade happens; this is still useful because the order adds <b>liquidity</b>.</div></div></div>
+
+    <div class="card"><h3>Example B · Time priority inside a level</h3>
+      <div class="ex">
+        <div class="mini">
+          <div class="row hdr"><span>Price</span><span>Qty</span><span>Order</span></div>
+          <div class="row b"><span class="buy">50.00</span><span class="gone">100</span><span>#1 → fully filled</span></div>
+          <div class="row b"><span class="buy">50.00</span><span>40 → 20</span><span>#3 → partially filled</span></div>
+          <div class="row b"><span class="buy">49.90</span><span>200</span><span>#2 untouched</span></div>
+        </div>
+        <div><div class="ticket" style="margin-bottom:10px"><b class="sell">SELL</b> LIMIT 120 @ 49.90</div>
+        <ol><li>Best bid is 50.00 ≥ 49.90 → cross. At 50.00, #1 arrived first → <span class="tr">TRADE 100 @ 50.00</span> with #1.</li>
+        <li>20 left. Next in line at 50.00 is #3 → <span class="tr">TRADE 20 @ 50.00</span>. #3 keeps 20 shares.</li>
+        <li>Seller is fully filled. Note: the seller asked for ≥49.90 but got 50.00. That's <b>price improvement</b>, because the trade uses the resting order's price.</li></ol></div>
+      </div></div>
+
+    <div class="card"><h3>Example C · Market order walking the book</h3>
+      <div class="ex">
+        <div class="mini">
+          <div class="row hdr"><span>Price</span><span>Qty</span><span>Order</span></div>
+          <div class="row a"><span class="sell">50.30</span><span>80</span><span>#6 untouched</span></div>
+          <div class="row a"><span class="sell">50.20</span><span>300 → 150</span><span>#4 partial</span></div>
+          <div class="row a"><span class="sell">50.10</span><span class="gone">50</span><span>#5 filled</span></div>
+        </div>
+        <div><div class="ticket" style="margin-bottom:10px"><b class="buy">BUY</b> MARKET 200</div>
+        <ol><li>Best ask 50.10 → <span class="tr">TRADE 50 @ 50.10</span> with #5.</li>
+        <li>Next level 50.20 → <span class="tr">TRADE 150 @ 50.20</span> with #4 (150 left on #4).</li>
+        <li>Average price paid ≈ 50.175. A large market order <b>moves the price</b>, which is why traders worry about "market impact".</li></ol></div>
+      </div></div>
+
+    <div class="card"><h3>Example D · Cancel and modify</h3>
+      <p style="margin:0"><b>CANCEL #1</b>: the engine has to find #1 quickly, remove it from the middle of the 50.00 queue, and #3 becomes first in line. Doing this in O(1) is exactly why your advisor mentioned an "intrusive list" and an order-id hash map.<br>
+      <b>MODIFY #3 → price 50.10</b>: treated as cancel #3 + new order #3 at 50.10, so it goes to the <b>back of the line</b> at its new price. In this book it would actually cross the ask at 50.10 and trade.</p></div>
+
+    <!-- 1.6 -->
+    <h2 id="play"><span class="num">1.6</span>Try it yourself</h2>
+    <p class="muted">A toy matching engine running in this page. It follows exactly the rules above. Try reproducing examples A–D, or try to empty one side of the book with a market order.</p>
+    <div class="sim">
+      <div class="panel">
+        <label>Side</label>
+        <div class="seg" id="side"><button class="b on" data-v="buy">BUY</button><button class="s" data-v="sell">SELL</button></div>
+        <label>Type</label>
+        <div class="seg" id="type"><button class="on" data-v="limit">LIMIT</button><button data-v="market">MARKET</button></div>
+        <label for="price">Price</label>
+        <input type="number" id="price" step="0.01" min="0.01" value="50.05">
+        <label for="qty">Quantity</label>
+        <input type="number" id="qty" step="1" min="1" value="30">
+        <button class="go" id="submit">Send BUY order</button>
+        <div style="display:flex;gap:8px;margin-top:12px"><button class="small-btn" id="reset">Reset book</button><button class="small-btn" id="clearlog">Clear log</button></div>
+      </div>
+      <div class="panel">
+        <div class="book-live" id="sim-book"></div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+
+    <!-- 1.7 -->
+    <h2 id="events"><span class="num">1.7</span>What the engine outputs: events</h2>
+    <div class="card">
+      <p style="margin-top:0">Look at the log in the simulator. For every input, the engine produces a list of <b>events</b>:</p>
+      <div class="ticket">
+        IN&nbsp; NEW #7 SELL LIMIT 120 @ 49.90<br>
+        OUT ACCEPTED #7<br>
+        OUT <span class="tr">TRADE</span> 100 @ 50.00 buyer=#1 seller=#7<br>
+        OUT <span class="tr">TRADE</span> 20 @ 50.00 buyer=#3 seller=#7<br>
+        OUT FILLED #7
+      </div>
+      <p style="margin-bottom:0">If you write down every <b>input</b> in order (the <b>event log</b>), you can rebuild the whole book later by feeding the same inputs into the engine again. That's <b>deterministic replay</b>, the fault-tolerance part your advisor wants. Saving the whole book every now and then (a <b>snapshot</b>) means you only have to replay from the last snapshot instead of from the beginning.</p>
+    </div>
+
+    <!-- 1.8 -->
+    <h2 id="where"><span class="num">1.8</span>Where the matching engine sits in a real exchange</h2>
+    <div class="pipe">
+      <div class="stage"><b>Traders / brokers</b>send orders</div><div class="arrow">→</div>
+      <div class="stage"><b>Gateway</b>network entry, protocol parsing (FIX, OUCH)</div><div class="arrow">→</div>
+      <div class="stage"><b>Risk checks</b>enough money? sane price?</div><div class="arrow">→</div>
+      <div class="stage"><b>Sequencer</b>puts all orders in one strict order</div><div class="arrow">→</div>
+      <div class="stage core"><b>Matching engine</b>order book + matching</div><div class="arrow">→</div>
+      <div class="stage"><b>Outputs</b>trade reports, market data feed (ITCH), dashboards</div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="margin-top:0">A real exchange is a whole system. <b>Our project is the highlighted box</b>, plus a simple way to feed it orders (a file or a generator), plus the event log for recovery, plus a separate dashboard that reads the outputs.</p>
+      <p style="margin-bottom:0" class="muted">The <b>sequencer</b> is worth noticing: the engine is usually <b>single-threaded per order book</b>. Orders are processed one at a time, in one fixed order. That sounds slow, but it's simple, deterministic, and with good data structures it can process millions of orders per second. LMAX's well-known architecture is built on this idea; we'll read about it in Step 3.</p>
+    </div>
+
+    <!-- 1.9 -->
+    <h2 id="v1"><span class="num">1.9</span>What this means for our version 1</h2>
+    <div class="card">
+      <p style="margin-top:0">This isn't decided yet; it's just to see how small the start can be:</p>
+      <ul>
+        <li>One symbol, one order book, single-threaded.</li>
+        <li>Limit orders, market orders, cancel.</li>
+        <li>Price-time priority with partial fills.</li>
+        <li>Prices as integer ticks.</li>
+        <li>Input: a simple text file of orders. Output: printed events.</li>
+        <li>The simplest data structures first (e.g. <code>std::map</code> + <code>std::list</code> + <code>std::unordered_map</code>), just to be correct.</li>
+      </ul>
+      <p style="margin-bottom:0">Every later feature (faster data structures, benchmarks, event log, snapshots, dashboard, maybe Raft) is an <b>upgrade on top of this</b>, and each upgrade can be measured against the previous version. That "v1 → v2 → v3, measured every time" story also makes a good thesis.</p>
+    </div>
+
+    <!-- glossary -->
+    <h2 id="glossary">Glossary</h2>
+    <div class="card"><dl class="gl">
+      <dt>Instrument / symbol</dt><dd>The thing being traded, e.g. THYAO.</dd>
+      <dt>Bid / Ask</dt><dd>A buy order / a sell order. "Ask" is also called "offer".</dd>
+      <dt>Best bid / best ask</dt><dd>Highest buy price / lowest sell price in the book. Together: the "top of book".</dd>
+      <dt>Spread</dt><dd>Best ask − best bid.</dd>
+      <dt>Price level</dt><dd>All resting orders at one price, kept in a FIFO queue.</dd>
+      <dt>Depth</dt><dd>How much quantity sits at each level, e.g. "top 5 levels". Dashboards show this.</dd>
+      <dt>Tick</dt><dd>Smallest allowed price step.</dd>
+      <dt>Resting order</dt><dd>An order waiting in the book.</dd>
+      <dt>Maker / taker</dt><dd>Maker = the resting order that provided liquidity. Taker = the incoming order that removed it.</dd>
+      <dt>Cross</dt><dd>When a buy price ≥ a sell price, so they can trade.</dd>
+      <dt>Fill / partial fill</dt><dd>An order (partly) executed.</dd>
+      <dt>Liquidity</dt><dd>How much is available to trade without moving the price a lot.</dd>
+      <dt>Price-time priority</dt><dd>Best price first; same price → earliest first. Also called FIFO matching.</dd>
+      <dt>Event log</dt><dd>The ordered record of all inputs, used to replay and recover.</dd>
+      <dt>Deterministic</dt><dd>Same inputs in same sequence → identical outputs, always.</dd>
+    </dl></div>
+
+    <!-- quiz -->
+    <h2 id="check">Check yourself</h2>
+    <p class="muted">Try to answer before opening. If any of these feel unclear, ask me about it before Step 2.</p>
+    <details><summary>1. Best bid 50.00, best ask 50.10. A BUY LIMIT 100 @ 50.05 arrives. What happens?</summary><p>No trade (50.05 &lt; 50.10). It rests as the new best bid; spread becomes 0.05.</p></details>
+    <details><summary>2. Two buy orders at 50.00: #1 (first) for 100, #3 (later) for 40. A SELL 60 @ 50.00 arrives. Who trades?</summary><p>Only #1, for 60 shares (time priority). #1 keeps 40; #3 is untouched.</p></details>
+    <details><summary>3. A BUY LIMIT 50 @ 51.00 arrives and the best ask is 50.10 with 50 shares. At what price is the trade?</summary><p>50.10, the resting (maker) order's price. The buyer was willing to pay 51.00 but gets price improvement.</p></details>
+    <details><summary>4. A market order can't be fully filled because the book runs out. What happens to the rest?</summary><p>It's cancelled. Market orders never rest in the book, because they have no price to rest at.</p></details>
+    <details><summary>5. Why do we store prices as integers instead of floats?</summary><p>Floats can't represent many decimals exactly (0.1 + 0.2 ≠ 0.3), which would break price comparisons. Integer ticks are exact and also allow indexing price levels in an array.</p></details>
+    <details><summary>6. Why must the engine be deterministic?</summary><p>So that replaying the event log after a crash rebuilds exactly the same book, and so that tests and benchmarks are reproducible.</p></details>
+
+    <p class="muted" style="margin-top:44px;font-size:13px">Step 02 · Markdown version: <code>docs/steps/02-how-an-exchange-works.md</code> · Next: <b>Step 04: why this is a computer engineering problem</b> (latency, percentiles, data structures, determinism).</p>
+  </main>
+</div>
+
+<script>
+(() => {
+  const TICK = 100; // prices stored as integer ticks (cents)
+  const fmt = t => (t / TICK).toFixed(2);
+  let bids, asks, nextId, seq;
+  const logEl = document.getElementById('log');
+  const bookEl = document.getElementById('sim-book');
+  let side = 'buy', type = 'limit';
+
+  function seed() {
+    bids = []; asks = []; nextId = 1; seq = 1;
+    // same starting book as section 1.3
+    rest('buy', 5000, 100);   // #1
+    rest('buy', 4990, 200);   // #2
+    rest('buy', 5000, 40);    // #3
+    rest('sell', 5020, 300);  // #4
+    rest('sell', 5010, 50);   // #5
+    rest('sell', 5030, 80);   // #6
+  }
+  function rest(s, price, qty, id) {
+    const o = { id: id ?? nextId++, price, qty, seq: seq++ };
+    const arr = s === 'buy' ? bids : asks;
+    arr.push(o);
+    // bids: high price first; asks: low price first; same price: earlier seq first
+    arr.sort((a, b) => (s === 'buy' ? b.price - a.price : a.price - b.price) || a.seq - b.seq);
+    return o;
+  }
+  function log(text, cls) {
+    const d = document.createElement('div'); if (cls) d.className = cls; d.textContent = text;
+    logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight;
+  }
+  function submit(s, t, price, qty) {
+    const id = nextId++;
+    log(`IN  NEW #${id} ${s.toUpperCase()} ${t.toUpperCase()} ${qty}${t === 'limit' ? ' @ ' + fmt(price) : ''}`);
+    log(`OUT ACCEPTED #${id}`, 'r');
+    const opp = s === 'buy' ? asks : bids;
+    let left = qty;
+    while (left > 0 && opp.length) {
+      const best = opp[0];
+      const crosses = t === 'market' || (s === 'buy' ? price >= best.price : price <= best.price);
+      if (!crosses) break;
+      const fill = Math.min(left, best.qty);
+      left -= fill; best.qty -= fill;
+      const buyer = s === 'buy' ? id : best.id, seller = s === 'sell' ? id : best.id;
+      log(`OUT TRADE ${fill} @ ${fmt(best.price)}  buyer=#${buyer} seller=#${seller}`, 't');
+      if (best.qty === 0) { opp.shift(); log(`OUT FILLED #${best.id}`, 'r'); }
+    }
+    if (left === 0) log(`OUT FILLED #${id}`, 'r');
+    else if (t === 'limit') { rest(s, price, left, id); log(`OUT RESTING #${id} ${left} @ ${fmt(price)}`, 'r'); }
+    else log(`OUT CANCELLED #${id} remaining ${left} (no more liquidity)`, 'r');
+    render(true);
+  }
+  function cancel(id) {
+    for (const arr of [bids, asks]) {
+      const i = arr.findIndex(o => o.id === id);
+      if (i >= 0) { arr.splice(i, 1); log(`IN  CANCEL #${id}`); log(`OUT CANCELLED #${id}`, 'r'); render(true); return; }
+    }
+  }
+  function row(o, cls, best) {
+    return `<div class="row ${cls}${best ? ' best' : ''}"><span class="${cls === 'a' ? 'sell' : 'buy'}">${fmt(o.price)}</span><span>${o.qty}</span><span>#${o.id}</span><span class="muted">t=${o.seq}</span><button class="x" data-id="${o.id}">cancel</button></div>`;
+  }
+  function render(flash) {
+    let h = `<div class="row hdr"><span>Price</span><span>Qty</span><span>Order</span><span>Arrival</span><span></span></div>`;
+    h += asks.length ? asks.slice().reverse().map((o, i, a) => row(o, 'a', i === a.length - 1)).join('') : `<div class="empty">no asks (sellers)</div>`;
+    const spread = bids.length && asks.length ? `spread ${fmt(asks[0].price - bids[0].price)} · best bid ${fmt(bids[0].price)} · best ask ${fmt(asks[0].price)}` : 'one side is empty, no spread';
+    h += `<div class="mid">${spread}</div>`;
+    h += bids.length ? bids.map((o, i) => row(o, 'b', i === 0)).join('') : `<div class="empty">no bids (buyers)</div>`;
+    bookEl.innerHTML = h;
+    if (flash) { bookEl.classList.remove('flash'); void bookEl.offsetWidth; bookEl.classList.add('flash'); }
+  }
+
+  const priceEl = document.getElementById('price'), qtyEl = document.getElementById('qty'), btn = document.getElementById('submit');
+  function syncBtn() {
+    btn.textContent = `Send ${side.toUpperCase()} ${type.toUpperCase()} order`;
+    btn.classList.toggle('s', side === 'sell');
+    priceEl.disabled = type === 'market';
+  }
+  function seg(elId, set) {
+    document.querySelectorAll(`#${elId} button`).forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll(`#${elId} button`).forEach(x => x.classList.remove('on'));
+      b.classList.add('on'); set(b.dataset.v); syncBtn();
+    }));
+  }
+  seg('side', v => side = v); seg('type', v => type = v);
+  btn.addEventListener('click', () => {
+    const q = Math.floor(Number(qtyEl.value)); const p = Math.round(Number(priceEl.value) * TICK);
+    if (!(q > 0)) return log('REJECTED: quantity must be a positive whole number', 'r');
+    if (type === 'limit' && !(p > 0)) return log('REJECTED: price must be positive', 'r');
+    submit(side, type, p, q);
+  });
+  bookEl.addEventListener('click', e => { const id = e.target.dataset && e.target.dataset.id; if (id) cancel(Number(id)); });
+  document.getElementById('reset').addEventListener('click', () => { seed(); log('--- book reset to the example in 1.3 ---', 'r'); render(true); });
+  document.getElementById('clearlog').addEventListener('click', () => { logEl.innerHTML = ''; });
+  seed(); render(false); syncBtn();
+  log('Book loaded with the example from 1.3. Send an order to see matching.', 'r');
+})();
+</script>
+</body>
+</html>
