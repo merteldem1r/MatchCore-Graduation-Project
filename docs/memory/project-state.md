@@ -6,11 +6,12 @@
 
 ## Current step
 
-**04 · Why this is a computer engineering problem**: next to start.
+**04 · Why this is a computer engineering problem**: next to start (target 2026-10-19).
 
 ## Recently done
 
-- 03 Name & repository structure: codename **MatchCore**, repo layout, AI context, git rule (2026-10-17).
+- 03 Name & repository structure: codename **MatchCore**, "one question → one home" docs layout, AI context (rules + state auto-loaded, `/step` and `/wrap-up` skills), git rule (2026-10-17).
+- Repo tooling: Conventional Commits enforced by `.githooks/commit-msg` + a GitHub Actions check; Claude is blocked from `git add` / `commit` / `push` (2026-10-17).
 
 ## Components
 
@@ -20,6 +21,7 @@ Engine, server, client: not started. See `docs/application/README.md`.
 
 1. Step 04: latency vs. throughput, percentiles, what makes code fast/slow, data structures per operation, determinism.
 2. Keep the pace in `docs/steps/README.md`; the proposal must be sent by **2026-11-01**.
+3. On any new clone or machine: `git config core.hooksPath .githooks`.
 
 ## Open questions
 

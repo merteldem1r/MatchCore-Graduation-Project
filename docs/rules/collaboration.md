@@ -15,12 +15,13 @@ Rules for everyone working on this repository, human or AI agent.
 6. After each session, update [`../memory/project-state.md`](../memory/project-state.md). Log decisions in [`../memory/decisions.md`](../memory/decisions.md).
 7. Daily routine: start a step → discuss → write the step document → wrap up (update project state, decisions, statuses) → the student commits.
 8. Long explanations can also get an interactive HTML version in `steps/interactive/`; the Markdown version is the main one.
+9. **No emojis** in documentation or university documents. Use plain words for status (Done, Next, Planned).
 
 ## Git
 
-9. Agents never add, commit or push; the student does. After every change: a short recap + suggested git commands. See [`git-and-recap.md`](git-and-recap.md).
+10. Agents never add, commit or push; the student does. After every change: a short recap + suggested git commands. See [`git-and-recap.md`](git-and-recap.md).
 
 ## Code (once it starts)
 
-10. The engine's critical path stays simple, deterministic and measurable. Anything that is not matching (logging to the dashboard, metrics export) must not slow it down.
-11. Every performance claim needs a benchmark that backs it up.
+11. The engine's critical path stays simple, deterministic and measurable. Anything that is not matching (logging to the dashboard, metrics export) must not slow it down.
+12. Every performance claim needs a benchmark that backs it up.
