@@ -17,18 +17,18 @@ Steps are **high-level and project-wide**: the milestones in *understanding* the
 
 ## Step list
 
-**This table is the single place where step status is tracked.** Target dates are set so the proposal is sent by **2026-11-01**, with a few days' buffer for advisor feedback.
+**This table is the single place where step status is tracked.** Target dates are set so the proposal is sent by **2026-11-01**. Step 08 was done before 04–07 because of that deadline (see [08](08-proposal-form.md)); 04–07 follow after the submission.
 
 | # | Step | Target | Status | Interactive version |
 | --- | --- | --- | --- | --- |
 | 01 | [Project idea](01-project-idea.md) | 2026-10-16 | Done | [kickoff page](interactive/01-project-kickoff.html) |
 | 02 | [How an exchange works](02-how-an-exchange-works.md) | 2026-10-17 | Done | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
 | 03 | [Project name & repository structure](03-name-and-repo-structure.md) | 2026-10-17 | Done | — |
-| 04 | Why this is a computer engineering problem | 2026-10-19 | Next | — |
-| 05 | Similar projects & research material | 2026-10-21 | Planned | — |
-| 06 | Tech stack | 2026-10-22 | Planned | — |
-| 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | 2026-10-24 | Planned | — |
-| 08 | Proposal form: final title, two-semester timeline | draft 10-27 · send by 10-30 | Planned | — |
+| 04 | Why this is a computer engineering problem | after the proposal | Next | — |
+| 05 | Similar projects & research material | after the proposal | Planned | — |
+| 06 | Tech stack | after the proposal | Planned | — |
+| 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | after the proposal | Planned | — |
+| 08 | [Proposal form](08-proposal-form.md) | send by 2026-11-01 | In progress (ready to send) | — |
 
 Midterm week: 2026-11-02 → 11-08. Steps after 08 are added here as they are planned. The product's version plan is in [`../application/ROADMAP.md`](../application/ROADMAP.md).
 

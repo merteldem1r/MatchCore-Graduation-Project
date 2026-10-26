@@ -45,3 +45,9 @@ coverage/
 
 # Logs
 *.log
+
+# Filled university forms (contain personal data; the .md source is committed instead)
+docs/graduation-project/submissions/*.docx
+
+# other files / folders
+/.claude-logs
