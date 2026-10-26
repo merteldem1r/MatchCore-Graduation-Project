@@ -27,16 +27,16 @@ The full text is in [`../graduation-project/submissions/01-proposal-form.md`](..
 
 ### Writing style
 
-The form is written mainly in Turkish, keeping English technical terms where they are the common usage (for example *eşleştirme motoru (matching engine)*, *benchmark*, *snapshot*). It is written plainly, the way a student would explain the project, not like a research paper. It stays short and only promises what the roadmap already plans. The web framework is left open on purpose, since a proposal can change later.
+The form uses Turkish sentences, but every technical term stays in English: *engine*, *order book*, *price-time priority*, *latency*, *data structure*, *crash recovery*, *event log*. A first draft translated them (*motor*, *emir defteri*), which read less naturally than the terms the field actually uses. It is written plainly, the way a student would explain the project, not like a research paper. It stays short and only promises what the roadmap already plans. The web framework is left open on purpose, since a proposal can change later.
 
 ### How it is sent
 
-Email to `bm@medeniyet.edu.tr`, subject `BIL497: proje başvuru formu`, with the advisor in CC (then no signature is needed), and the `.docx` attached.
+Email to `bm@medeniyet.edu.tr`, subject `BIL497: proje başvuru formu`, with the advisor in CC (then no signature is needed), and the PDF export of the form attached. Before that, the form also goes to the advisor for a quick review, together with a short progress update.
 
 ## Decisions
 
 - D14: title, option A.
-- D15: university documents are written mainly in Turkish, with common English technical terms kept (often in parentheses); the title is in Turkish and English.
+- D15: university documents use Turkish sentences with English technical terms; the title is in Turkish and English.
 - D16: the proposal was written before steps 04–07, which move to after the submission.
 - D17: the reference list is cut down to three core sources.
 - D18: filled `.docx` forms are kept out of git; their Markdown source is committed.

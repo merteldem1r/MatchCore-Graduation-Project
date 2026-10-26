@@ -10,7 +10,7 @@
 
 ## Recently done
 
-- Proposal form filled in, mainly Turkish with English technical terms, title in both languages (D14, D15): source `docs/graduation-project/submissions/01-proposal-form.md`, form `01-proposal-form.docx` (git-ignored, D18) (2026-10-26).
+- Proposal form filled in, Turkish sentences with English technical terms, title in both languages (D14, D15): source `docs/graduation-project/submissions/01-proposal-form.md`, form `01-proposal-form.docx` (git-ignored, D18) (2026-10-26).
 - Reference list cut to three core sources (D17) (2026-10-26).
 - 03 Name & repository structure: codename **MatchCore**, docs layout, AI context, git rule (2026-10-17).
 
@@ -20,7 +20,7 @@ Engine, server, client: not started. See `docs/application/README.md`.
 
 ## Next actions
 
-1. Student sends the form: email to `bm@medeniyet.edu.tr`, subject `BIL497: proje başvuru formu`, advisor in CC, `.docx` attached. Then mark step 08 done.
+1. Student sends the form (`01-proposal-form.pdf`) to the advisor for review with a progress update, then to `bm@medeniyet.edu.tr` (subject `BIL497: proje başvuru formu`, advisor in CC) by 2026-11-01. Then mark step 08 done.
 2. Steps 04 → 07, in order (understanding + confirming the decisions the proposal already uses).
 3. On any new clone or machine: `git config core.hooksPath .githooks`.
 
