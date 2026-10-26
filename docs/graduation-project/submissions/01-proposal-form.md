@@ -16,7 +16,7 @@ In the `.docx` only.
 
 ## Verildiği Tarih
 
-26.10.2026
+16.09.2026
 
 ## Danışman
 
