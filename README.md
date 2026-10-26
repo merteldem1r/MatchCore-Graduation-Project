@@ -1,4 +1,6 @@
-# MatchCore - Order Mathching Engine | Graduation Project
+# MatchCore - Order Matching Engine | Graduation Project
+
+![MatchCore: an order book depth chart with bids on the left and asks on the right](docs/assets/banner.svg)
 
 **Author**: Mert Eldemir
 </br>
