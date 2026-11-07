@@ -1,6 +1,6 @@
 # 08 · Proposal Form
 
-> **Status:** in progress (ready to send) · **Date:** 2026-10-26
+> **Status:** done · **Date:** 2026-10-26 (sent 2026-10-27)
 
 ## Goal of this step
 
@@ -33,6 +33,10 @@ The form uses Turkish sentences, but every technical term stays in English: *eng
 
 Email to `bm@medeniyet.edu.tr`, subject `BIL497: proje başvuru formu`, with the advisor in CC (then no signature is needed), and the PDF export of the form attached. Before that, the form also goes to the advisor for a quick review, together with a short progress update.
 
+### Outcome
+
+Sent to the department on **2026-10-27**, with the advisor in CC. The advisor reviewed the repository and said the starting point is fine. There has been no specific feedback on the form itself yet.
+
 ## Decisions
 
 - D14: title, option A.
@@ -47,4 +51,4 @@ Email to `bm@medeniyet.edu.tr`, subject `BIL497: proje başvuru formu`, with the
 
 ## Next step
 
-→ Send the form and mark this step done. Then 04 · Why this is a computer engineering problem.
+→ 04 · Why this is a computer engineering problem.

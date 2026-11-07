@@ -6,7 +6,7 @@
 
 | When | Milestone |
 | --- | --- |
-| by 2026-11-01 | Proposal form sent |
+| by 2026-11-01 | Proposal form sent (done, 2026-10-27) |
 | ~2026-12-14 → 12-20 | Interim report (if requested) |
 | Spring 2027, end of week 13 | Thesis submitted |
 | End of spring 2027 | Jury presentation |

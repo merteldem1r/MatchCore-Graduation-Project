@@ -28,7 +28,7 @@ Steps are **high-level and project-wide**: the milestones in *understanding* the
 | 05 | Similar projects & research material | after the proposal | Planned | — |
 | 06 | Tech stack | after the proposal | Planned | — |
 | 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | after the proposal | Planned | — |
-| 08 | [Proposal form](08-proposal-form.md) | send by 2026-11-01 | In progress (ready to send) | — |
+| 08 | [Proposal form](08-proposal-form.md) | send by 2026-11-01 | Done (sent 2026-10-27) | — |
 
 Midterm week: 2026-11-02 → 11-08. Steps after 08 are added here as they are planned. The product's version plan is in [`../application/ROADMAP.md`](../application/ROADMAP.md).
 
