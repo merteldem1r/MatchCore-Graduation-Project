@@ -1,6 +1,6 @@
 # Proposal Form (Bitirme Projesi Başvuru Formu)
 
-> **Status:** draft · **Date:** 2026-10-26
+> **Status:** sent 2026-10-27 · **Date:** 2026-10-26
 >
 > Source text for the official form. The filled form is `01-proposal-form.docx` (not committed: it holds the student number and the advisor's details). The title is in Turkish and English; the body uses Turkish sentences with English technical terms (engine, order book, latency, benchmark, …), as the field actually talks.
 

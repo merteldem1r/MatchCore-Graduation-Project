@@ -7,7 +7,8 @@
 | When | Milestone |
 | --- | --- |
 | by 2026-11-01 | Proposal form sent (done, 2026-10-27) |
-| ~2026-12-14 → 12-20 | Interim report (if requested) |
+| ~2026-12-14 → 12-20 | Interim report, only if the advisor requests it |
+| Early January 2027 (after finals) | Short presentation of the v1 prototype to the advisor (D20) |
 | Spring 2027, end of week 13 | Thesis submitted |
 | End of spring 2027 | Jury presentation |
 
@@ -17,8 +18,8 @@ Each version is a measured upgrade of the previous one.
 
 | Version | What it adds | Component | Target |
 | --- | --- | --- | --- |
-| **v1** | Correct basic engine: one symbol, limit + market + cancel, price-time priority, integer ticks, standard containers, text-file input → printed events | engine | Nov 2026 |
-| **v2** | Measurement: benchmark harness, workload generator, latency percentiles | engine | Dec 2026 (interim report) |
+| **v1** | Correct basic engine: one symbol, limit + market + cancel, price-time priority, integer ticks, standard containers, text-file input → printed events | engine | Dec 2026 (end-of-term presentation) |
+| **v2** | Measurement: benchmark harness, workload generator, latency percentiles | engine | Jan–Feb 2027 |
 | **v3** | Faster data structures, compared against v1 (price-level array/bitmap, intrusive FIFO lists, order-id index) | engine | Feb–Mar 2027 |
 | **v4** | Fault tolerance: event log + snapshots + deterministic replay | engine | Mar–Apr 2027 |
 | **v5** | Read-only dashboard: Go server + web client | server, client | Apr 2027 |
