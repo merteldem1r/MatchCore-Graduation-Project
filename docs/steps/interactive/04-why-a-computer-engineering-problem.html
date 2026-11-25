@@ -153,7 +153,47 @@
   summary { cursor: pointer; font-weight: 600; }
   details p { margin: 8px 0 0; }
 
+
+  /* topic 2 */
+  .topic-hd { margin: 80px 0 0; padding: 18px 22px; border-radius: 14px; background: var(--accent-soft); scroll-margin-top: 24px; }
+  .topic-hd h2 { margin: 2px 0 6px; font-size: 24px; } .topic-hd p { margin: 0; }
+  nav .grp-h { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 14px 10px 2px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin: 12px 0; }
+  .stat { background: var(--surface-2); border-radius: 10px; padding: 8px 12px; border-left: 4px solid transparent; }
+  .stat b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 12px; color: var(--muted); line-height: 1.35; display: block; }
+  .stat.avg { border-left-color: var(--amber); } .stat.p50 { border-left-color: var(--buy); } .stat.p99 { border-left-color: var(--trade); } .stat.max { border-left-color: var(--sell); }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart .bar { fill: var(--accent); } .chart .bar.burst { fill: var(--sell); }
+  .chart .ln { stroke-width: 2; } .chart .ln.avg { stroke: var(--amber); stroke-dasharray: 6 4; } .chart .ln.p50 { stroke: var(--buy); } .chart .ln.p99 { stroke: var(--trade); }
+  .chart text { fill: var(--muted); font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .chart text.avg { fill: var(--amber); } .chart text.p50 { fill: var(--buy); } .chart text.p99 { fill: var(--trade); }
+  .chart .axis { stroke: var(--border); }
+  label.plain { text-transform: none; letter-spacing: 0; font-size: 13.5px; }
+  .card pre { white-space: pre-wrap; }
+  textarea { width: 100%; font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; resize: vertical; }
+  .seg4 { display: inline-flex; background: var(--surface); border-radius: 8px; padding: 3px; gap: 3px; }
+  .seg4 button { background: transparent; color: var(--muted); border: 0; padding: 4px 12px; border-radius: 6px; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .seg4 button.on { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg4 button.on { color: #111; } }
+  label.chk { display: inline-flex; gap: 6px; align-items: center; margin: 0; text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--text); }
+  .ladder { display: grid; gap: 8px; }
+  .lrow { display: grid; grid-template-columns: 80px 1fr 64px 190px; gap: 10px; align-items: center; font-size: 14px; }
+  .lname { font-weight: 600; } .lval { font-variant-numeric: tabular-nums; font-weight: 600; } .lnote { color: var(--muted); font-size: 13px; }
+  .lbar { background: var(--surface-2); border-radius: 6px; height: 16px; overflow: hidden; }
+  .lbar i { display: block; height: 100%; min-width: 4px; background: var(--buy); border-radius: 6px; } .lbar i.slow { background: var(--sell); }
+  .mem { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .mem .line { display: inline-flex; border: 2px solid var(--accent); border-radius: 8px; padding: 3px; gap: 3px; }
+  .mem .line i, .mem .line s { width: 30px; height: 30px; border-radius: 5px; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 13px; text-decoration: none; }
+  .mem .line i { background: var(--sell-soft); color: var(--sell); } .mem .line s { background: var(--surface-2); }
+  .mem.scattered .line { border-color: var(--border); }
+  .mem .more { color: var(--muted); }
+  @media (max-width: 600px) {
+    dl.fields { grid-template-columns: 1fr; gap: 2px; } dl.fields dd { margin-bottom: 8px; }
+    table.units th:nth-child(3), table.units td:nth-child(3) { display: none; }
+  }
   @media (max-width: 900px) {
+    .lrow { grid-template-columns: 70px 1fr 60px; } .lnote { grid-column: 1 / -1; margin-top: -4px; }
     .layout { grid-template-columns: 1fr; padding: 20px 16px 60px; gap: 0; }
     nav { position: static; margin-bottom: 8px; } nav .links { display: flex; flex-wrap: wrap; gap: 2px; }
     .below { grid-template-columns: 1fr; }
@@ -170,6 +210,7 @@
     <div class="links">
       <a href="#start">Start here</a>
       <a href="#topics">The five topics</a>
+      <div class="grp-h">Topic 1 · Data structures</div>
       <a href="#ops">1.1 · Three operations</a>
       <a href="#arrays">1.2 · Why not an array?</a>
       <a href="#levels">1.3 · Price levels</a>
@@ -178,13 +219,22 @@
       <a href="#live">1.6 · Try it: live book</a>
       <a href="#catches">1.7 · Two catches</a>
       <a href="#check">Check yourself</a>
+      <div class="grp-h">Topic 2 · Latency</div>
+      <a href="#lat-start">2.0 · Words first</a>
+      <a href="#lat-tp">2.1 · The single cashier</a>
+      <a href="#lat-pct">2.2 · Percentiles</a>
+      <a href="#lat-mem">2.3 · Memory</a>
+      <a href="#lat-hidden">2.4 · Hidden costs</a>
+      <a href="#lat-measure">2.5 · Measuring honestly</a>
+      <a href="#lat-check">Check yourself</a>
+      <div class="grp-h">Next</div>
       <a href="#next">What comes next</a>
     </div>
   </nav>
 
   <main>
     <h1>Why a matching engine is a computer engineering problem</h1>
-    <p class="lead">Matching orders sounds simple: put buyers and sellers together. The hard part is doing it correctly, very fast, for every single message. This page works through the first difficulty, the data structures behind the order book, from the simplest idea to the design real engines use.</p>
+    <p class="lead">Matching orders sounds simple: put buyers and sellers together. The hard part is doing it correctly, very fast, for every single message. This page works through the first two difficulties: <b>topic 1</b>, the data structures behind the order book, and <b>topic 2</b>, latency: what "fast" means and where the time actually goes.</p>
 
     <!-- START HERE -->
     <h2 id="start"><span class="num">0</span>Start here: how to read this page</h2>
@@ -263,9 +313,9 @@
     <div class="table-wrap"><table class="t">
       <thead><tr><th>#</th><th>Topic</th><th>Question</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td><b>Data structures</b></td><td>How does the engine keep the book so every operation is fast?</td><td>This page</td></tr>
-        <tr><td>2</td><td>Latency</td><td>What does "fast" mean, and where does the time go?</td><td class="muted">Next</td></tr>
-        <tr><td>3</td><td>Determinism</td><td>Why must the same input always give the same trades?</td><td class="muted">Planned</td></tr>
+        <tr><td>1</td><td><b>Data structures</b></td><td>How does the engine keep the book so every operation is fast?</td><td>Done · this page</td></tr>
+        <tr><td>2</td><td><b>Latency</b></td><td>What does "fast" mean, and where does the time go?</td><td>Done · this page</td></tr>
+        <tr><td>3</td><td>Determinism</td><td>Why must the same input always give the same trades?</td><td class="muted">Next</td></tr>
         <tr><td>4</td><td>Crash recovery</td><td>How do an event log and replay rebuild the exact state?</td><td class="muted">Planned</td></tr>
         <tr><td>5</td><td>Concurrency</td><td>Why do engines match on a single thread?</td><td class="muted">Planned</td></tr>
       </tbody>
@@ -449,7 +499,7 @@ price 103 :  C (2)</pre>
       <div class="card"><h3>Linked list nodes are scattered in memory</h3>Following a pointer to a node that isn't in the CPU cache is slow. An array is one contiguous block; a list is not. This is where topic 2 (latency) starts, and why v3 tries intrusive lists and pre-allocated memory.</div>
     </div>
 
-    <h2 id="check"><span class="num">?</span>Check yourself</h2>
+    <h2 id="check"><span class="num">?</span>Check yourself (topic 1)</h2>
     <details><summary>1. Why is an unsorted array a bad order book, even though inserting is O(1)?</summary><p>Finding the best price and the oldest order there needs a scan of every order, O(n), on every incoming message.</p></details>
     <details><summary>2. In a sorted array, why is cancel still O(n)?</summary><p>It is sorted by price, but a cancel carries only an ID, so finding the order is a scan. Removing it from the middle then shifts the later elements.</p></details>
     <details><summary>3. Why do price levels help so much?</summary><p>Many orders share a price, so the number of levels L is far smaller than the number of orders n. Sorting levels instead of orders makes the costs depend on L.</p></details>
@@ -457,8 +507,234 @@ price 103 :  C (2)</pre>
     <details><summary>5. What does the hash map store, and why does each order keep a pointer to its level?</summary><p>A pointer to the order's node, so cancel jumps straight to it. The level pointer lets the engine fix the level's head or tail after unlinking, and remove the level if it became empty.</p></details>
     <details><summary>6. A resting order is partly filled. Does it lose its place in the line?</summary><p>No. Only its quantity changes; it stays at the head with its time priority. Try it in the live book: B stays at the head after the replay.</p></details>
 
+    <!-- ======================= TOPIC 2: LATENCY ======================= -->
+    <div class="topic-hd" id="t2"><span class="muted">Topic 2 of 5</span><h2>Latency: what "fast" means, and where the time goes</h2>
+      <p>In topic 1 we counted <b>steps</b>: O(1), O(n), "looked at 4, shifted 3". But the advisor, the jury and the benchmarks ask how much <b>time</b> something takes. This topic connects the two, and shows why they don't always agree.</p></div>
+
+    <h2 id="lat-start"><span class="num">2.0</span>Start here: the words this topic uses</h2>
+    <p>Every later section uses these words. Read them once; come back whenever a word is unclear.</p>
+
+    <h3 style="margin-top:14px">How small is a microsecond?</h3>
+    <div class="table-wrap"><table class="t units">
+      <thead><tr><th>Unit</th><th>Part of a second</th><th>Feels like…</th><th>Where you meet it</th></tr></thead>
+      <tbody>
+        <tr><td><b>ms</b> millisecond</td><td>1 / 1,000</td><td>a blink takes about 100 ms</td><td>a web request: tens to hundreds of ms</td></tr>
+        <tr><td><b>µs</b> microsecond</td><td>1 / 1,000,000</td><td>light travels about 300 m</td><td>one order in a matching engine</td></tr>
+        <tr><td><b>ns</b> nanosecond</td><td>1 / 1,000,000,000</td><td>light travels about 30 cm</td><td>one memory read, one CPU step</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="margin-top:0">A matching engine lives about 1,000 times below the world of web requests. Our proposal promises "microseconds per order".</p>
+
+    <div class="grid2">
+      <div class="card"><h3>Time</h3>
+        <dl class="fields">
+          <dt>latency</dt><dd>how long <b>one</b> order takes: from reaching the engine until the engine has finished reacting (trades found, book updated, events out)</dd>
+          <dt>throughput</dt><dd>how <b>many</b> orders are handled per second</dd>
+        </dl></div>
+      <div class="card"><h3>Waiting</h3>
+        <dl class="fields">
+          <dt>queue</dt><dd>orders waiting because the engine is still busy with an earlier one</dd>
+          <dt>burst</dt><dd>many orders at almost the same moment (market open, news)</dd>
+          <dt>busy %</dt><dd>how much of the time the engine is working; 100% = never a free moment</dd>
+          <dt>headroom</dt><dd>spare capacity left over</dd>
+        </dl></div>
+    </div>
+
+    <div class="card"><h3>Describing many measurements: p50, p99 and friends</h3>
+      <dl class="fields">
+        <dt>sample</dt><dd>one measurement, e.g. "order 17 took 2 µs". A benchmark collects millions.</dd>
+        <dt>average</dt><dd>add all samples, divide by how many. Easily pulled up by a few very slow ones.</dd>
+        <dt>percentile</dt><dd>sort all samples from fastest to slowest; the <b>p-th percentile</b> is the value that p% of the samples are at or below.</dd>
+        <dt>p50</dt><dd>also called the <b>median</b>: half of the orders took this long or less. The normal case.</dd>
+        <dt>p90 · p99 · p99.9</dt><dd>90%, 99% or 99.9% of the orders took this long or less.</dd>
+        <dt>max</dt><dd>the single slowest order.</dd>
+        <dt>tail latency</dt><dd>the slow end of the sorted list (p99, p99.9, max): the rare slow orders.</dd>
+      </dl>
+      <div class="key" style="margin-bottom:0"><b>Read it like this.</b> "p99 = 3 µs" means: <i>99 out of every 100 orders took 3 µs or less; 1 in 100 took longer.</i></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><h3>Hardware</h3>
+        <dl class="fields">
+          <dt>RAM</dt><dd>main memory: where the data lives. Big, but slow to reach (about 100 ns).</dd>
+          <dt>cache</dt><dd>small, fast memory inside the CPU with copies of recently used data. L1 is the smallest and fastest, then L2.</dd>
+          <dt>hit / miss</dt><dd>hit: the data was already in the cache (fast). Miss: it had to come from RAM (slow).</dd>
+          <dt>cache line</dt><dd>the CPU always fetches a whole block, never one value. 128 bytes on Apple M2, 64 on most other CPUs.</dd>
+          <dt>prefetching</dt><dd>the CPU notices memory being read in order and fetches the next blocks early. Helps arrays, not linked lists.</dd>
+        </dl></div>
+      <div class="card"><h3>Hidden costs and measuring</h3>
+        <dl class="fields">
+          <dt>critical path</dt><dd>the code that runs for every order</dd>
+          <dt>allocation</dt><dd>asking for new memory (<code>new</code>). Usually fast, sometimes very slow.</dd>
+          <dt>memory pool</dt><dd>one big block taken at startup and handed out piece by piece</dd>
+          <dt>GC</dt><dd>garbage collection: Go and Java sometimes pause the program to clean memory. C++ has none.</dd>
+          <dt>warm-up</dt><dd>running for a while before measuring, so everything has settled</dd>
+          <dt>release build</dt><dd>compiled with optimisation (<code>-O2</code>): the real speed. A debug build is much slower.</dd>
+          <dt>histogram</dt><dd>counters per range ("how many took 0–50 ns, 50–100 ns, …")</dd>
+          <dt>workload · seed</dt><dd>the list of test orders; the starting number that makes a "random" workload repeatable</dd>
+        </dl></div>
+    </div>
+
+    <h2 id="lat-tp"><span class="num">2.1</span>Latency and throughput: the single cashier</h2>
+<pre>order arrives ──► [ engine works ] ──► events out
+      t₀                                    t₁
+               latency = t₁ − t₀</pre>
+    <p>Think of a supermarket with <b>one cashier</b>. Latency is how long one customer takes; throughput is how many customers are served per hour. Our engine is that single cashier: one order at a time, on one thread (topic 5 explains why).</p>
+    <div class="key"><b>The maths.</b> If the engine needs <b>2 µs</b> per order, it can handle at most 1,000,000 ÷ 2 = <b>500,000 orders per second</b>.</div>
+    <p>But a customer's real wait is their own service time <b>plus the time spent behind others in the queue</b>. Try it: the simulator below sends 120 orders at a steady rate, plus a burst of 10 extra orders all at once. Each bar is one order's latency.</p>
+
+    <div class="card">
+      <div class="ops">
+        <span class="grp">How busy is the engine?
+          <span class="seg4" id="q-util"><button data-v="0.5" class="on">50%</button><button data-v="0.8">80%</button><button data-v="0.95">95%</button><button data-v="1">100%</button></span></span>
+        <label class="chk"><input type="checkbox" id="q-burst" checked> add a burst of 10 orders</label>
+      </div>
+      <div class="stats" id="q-stats"></div>
+      <div class="chart" id="q-chart"></div>
+      <p class="note" id="q-note"></p>
+    </div>
+    <div class="key"><b>The lesson.</b> An engine running close to its limit has terrible latency as soon as traffic is bursty, and real markets are bursty. A faster engine is valuable even when it is "fast enough on average", because it leaves <b>headroom</b>.</div>
+
+    <h2 id="lat-pct"><span class="num">2.2</span>Why an average lies: percentiles and the tail</h2>
+    <p>Ten orders were measured, in µs: <code>2 2 3 2 2 3 2 2 2 180</code>. The average is 200 ÷ 10 = <b>20 µs</b>, yet <b>no order took 20 µs</b>. Nine took 2–3 µs and one took 180 µs. Sort the samples and read off positions instead:</p>
+<pre>sorted:  2  2  2  2  2  2  2  3  3  180
+         └──────── 90% ────────┘     └ the slowest 10%</pre>
+    <p>Now it is honest: <b>"normally 2 µs (p50), but sometimes up to 180 µs (max)."</b> Try it yourself: pick a preset or type your own numbers.</p>
+
+    <div class="card">
+      <div class="ops">
+        <button class="btn" data-preset="ten">Our 10 orders</button>
+        <button class="btn" data-preset="hundred">100 orders, one slow</button>
+        <button class="btn" data-preset="tail">100 orders, a bad tail</button>
+        <button class="btn" data-preset="flat">100 orders, all similar</button>
+      </div>
+      <label for="pct-in" class="plain">Latencies in microseconds, µs (separate with spaces or commas; up to 500 numbers)</label>
+      <textarea id="pct-in" rows="2"></textarea>
+      <div class="stats" id="pct-stats"></div>
+      <div class="chart" id="pct-chart"></div>
+      <p class="note" id="pct-note"></p>
+      <p class="muted" style="font-size:13px;margin:6px 0 0">How a percentile is picked here: sort the samples, then take the value at position p% × N, rounded up. So p90 of 10 samples is the 9th value, and p99 of 10 samples is the 10th.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><h3>Volume</h3>With 1,000,000 orders a day, <b>p99</b> describes the slowest <b>10,000</b> orders and <b>p99.9</b> the slowest <b>1,000</b>. "Rare" still means thousands of real orders.</div>
+      <div class="card"><h3>Who suffers</h3>In a market, being slow means someone else trades first. The trader whose order lands in the tail loses that trade.</div>
+      <div class="card"><h3>When</h3>Slow orders tend to happen in bursts, exactly when the market is busiest (see the simulator in 2.1).</div>
+    </div>
+    <p>That is why the advisor asked for <b>p50, p99, p99.9 and max</b> instead of an average, and why the v2 benchmarks report exactly those.</p>
+
+    <h2 id="lat-mem"><span class="num">2.3</span>Where the time goes: memory</h2>
+    <p>Why would one order take 180 µs when the others take 2? There are three kinds of "slow":</p>
+    <div class="grid2">
+      <div class="card"><h3>1 · Outside the engine</h3>The network. Real, but not what we measure: our latency starts when the order reaches the engine, and in benchmarks the orders come straight from memory.</div>
+      <div class="card"><h3>2 · More work</h3>A big order that sweeps many price levels really does more trades. Expected and easy to explain; the advisor's "aggressive market orders" workload measures it.</div>
+      <div class="card"><h3>3 · Same work, slow machine</h3>Things you cannot see in the code. The biggest one is <b>memory</b>.</div>
+    </div>
+    <p>The CPU keeps small, fast copies of data close to itself. The bars show the rough time to read one value from each place:</p>
+    <div class="card">
+      <div class="ladder">
+        <div class="lrow"><span class="lname">L1 cache</span><span class="lbar"><i style="width:1%"></i></span><span class="lval">~1 ns</span><span class="lnote">128 KB per performance core</span></div>
+        <div class="lrow"><span class="lname">L2 cache</span><span class="lbar"><i style="width:5%"></i></span><span class="lval">~5 ns</span><span class="lnote">16 MB</span></div>
+        <div class="lrow"><span class="lname">RAM</span><span class="lbar"><i class="slow" style="width:100%"></i></span><span class="lval">~100 ns</span><span class="lnote">16 GB</span></div>
+      </div>
+      <p class="note">Sizes read from the student's Apple M2 with <code>sysctl</code>; times are rough typical values. An order that needs 20 memory reads takes ~20 ns if everything is in L1, and ~2 µs if everything comes from RAM. Same code, same work, 100× different.</p>
+    </div>
+
+    <h3>Cache lines: why arrays win</h3>
+    <p>The CPU fetches a whole <b>cache line</b> at a time: 128 bytes on the M2. If one order takes 32 bytes, one line holds 4 orders.</p>
+    <div class="grid2">
+      <div class="card"><h3>Array: orders side by side</h3>
+        <div class="mem"><span class="line"><i>A</i><i>D</i><i>B</i><i>C</i></span><span class="line"><i>E</i><i>F</i><i>G</i><i>H</i></span></div>
+        <p class="note">Reading A brings D, B and C for free, and the CPU prefetches the next line. <b>8 orders = 2 trips to RAM.</b></p></div>
+      <div class="card"><h3>Linked list: nodes scattered</h3>
+        <div class="mem scattered"><span class="line"><i>A</i><s></s><s></s><s></s></span><span class="line"><s></s><s></s><i>D</i><s></s></span><span class="line"><s></s><i>B</i><s></s><s></s></span><span class="line"><s></s><s></s><s></s><i>C</i></span><span class="more">…</span></div>
+        <p class="note">Every <code>next</code> may land somewhere new. <b>8 orders = up to 8 trips to RAM.</b></p></div>
+    </div>
+    <p>This is the second catch of topic 1, now with numbers. Compare cancelling one order inside a price level (the hash map has already said which level):</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Level size</th><th>Sorted array (scan + shift)</th><th>Doubly linked list (unlink)</th><th>Likely faster</th></tr></thead>
+      <tbody>
+        <tr><td>5 orders</td><td>160 bytes: 2 neighbouring cache lines</td><td>3 scattered cache lines (the node and both neighbours)</td><td class="good">probably the array</td></tr>
+        <tr><td>5,000 orders</td><td>160 KB: ~1,250 cache lines, thousands of moves</td><td>still 3 cache lines</td><td class="good">the list, easily</td></tr>
+      </tbody>
+    </table></div>
+    <div class="key"><b>Big-O tells who wins when things get big. Only measurement tells where "big" starts.</b> That is why the advisor's workloads include <b>narrow vs wide price ranges</b>: a narrow range puts many orders on each level (favours the list), a wide range puts few (may favour the array).</div>
+
+    <h2 id="lat-hidden"><span class="num">2.4</span>Hidden costs, and paying up front</h2>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Hidden cause</th><th>What happens</th><th>Size</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Cache misses</td><td>data has to come from RAM</td><td>~100× an L1 read</td><td>compact data, arrays where they win, memory pools</td></tr>
+        <tr><td>Hash map growth</td><td>when full, one insert moves <i>every</i> entry into a bigger table</td><td>one insert becomes O(n)</td><td>reserve the full size at startup</td></tr>
+        <tr><td>Allocation</td><td><code>new</code> sometimes has to ask the operating system for memory</td><td>ns, suddenly µs</td><td>allocate once at startup (memory pool)</td></tr>
+        <tr><td>The operating system</td><td>our thread is paused to run something else</td><td>µs to ms</td><td>fewer background programs; many samples</td></tr>
+        <tr><td>Garbage collection</td><td>Go or Java pause the program to clean memory</td><td>µs to ms</td><td>a language without GC (C++), weighed in step 06</td></tr>
+        <tr><td>I/O on the critical path</td><td>printing or logging inside the matching code</td><td>µs to ms</td><td>logging and the dashboard stay off the critical path</td></tr>
+      </tbody>
+    </table></div>
+    <div class="key"><b>The rule: pay every expensive cost up front</b>, before the market opens, when nobody is waiting. For example <code>index.reserve(1'000'000)</code> makes the hash map big enough once, so it never grows during trading.</div>
+    <p>A related option: if the engine gives each order a simple counter as its ID (0, 1, 2, …), the index can be a plain <b>array where the ID is the position</b>. No hashing, no growth, and nearby IDs sit near each other in memory. This is the advisor's "hash table vs direct index" question, measured in v3.</p>
+
+    <h2 id="lat-measure"><span class="num">2.5</span>Measuring honestly</h2>
+    <p>The basic idea is simple: read a clock before and after, and keep the difference.</p>
+<pre>for each order in the workload:
+    t0 = clock.now()
+    engine.process(order)
+    t1 = clock.now()
+    histogram.record(t1 − t0)     // store it, don't print it here
+report p50, p99, p99.9, max</pre>
+    <p>What can make that number wrong was checked with a small throw-away C++ program on the student's Apple M2 (2026-11-25; not part of the repository):</p>
+    <div class="grid2">
+      <div class="card"><h3>1 · The clock is coarse</h3>
+        <pre>timer tick     = 41.67 ns
+one clock read ≈ 18 ns</pre>
+        <p class="note">Anything shorter than a tick shows up as 0 or 42 ns. <b>Fix:</b> time whole operations; repeat tiny ones 1,000 times and divide.</p></div>
+      <div class="card"><h3>2 · Even "nothing" has a tail</h3>
+        <pre>an empty region, timed 1M times
+p50   = 0 ns
+p99   = 42 ns
+p99.9 = 83 ns
+max   = 1,459 ns</pre>
+        <p class="note">The OS and hardware also need the CPU. <b>Fix:</b> millions of samples, percentiles, few background programs, record the machine.</p></div>
+      <div class="card"><h3>3 · The first run is slow</h3>
+        <pre>sum 64 MB, run 1: 6,579 µs
+sum 64 MB, run 2: 1,244 µs
+sum 64 MB, run 3: 1,258 µs</pre>
+        <p class="note">Caches and the CPU had not settled yet. <b>Fix:</b> warm up before measuring.</p></div>
+      <div class="card"><h3>4 · The wrong build</h3>
+        <pre>release (-O2):  ~1,250 µs
+debug   (-O0): ~66,000 µs</pre>
+        <p class="note">A debug build was ~50× slower. <b>Fix:</b> always a release build, and make sure the compiler does not delete unused work (Google Benchmark's <code>DoNotOptimize</code>).</p></div>
+      <div class="card"><h3>5 · Measuring disturbs the result</h3><p class="note" style="margin-top:0">Printing each sample puts I/O on the critical path. <b>Fix:</b> record into an in-memory histogram (HdrHistogram); print at the end.</p></div>
+      <div class="card"><h3>6 · Hiding the queue</h3><p class="note" style="margin-top:0">If the next order is sent only after the previous one finished, the queue from 2.1 never shows up ("coordinated omission"). <b>Fix:</b> also test orders arriving on a schedule or in bursts.</p></div>
+      <div class="card"><h3>7 · Different input every run</h3><p class="note" style="margin-top:0">Two runs with different random orders are not comparable. <b>Fix:</b> a fixed seed, so every run and every version sees the same orders. This needs a deterministic engine (topic 3).</p></div>
+    </div>
+    <h3>The seven rules (proposed benchmark rules for v2)</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>#</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Time whole operations; repeat tiny ones and divide</td></tr>
+        <tr><td>2</td><td>Millions of samples; report p50 / p99 / p99.9 / max, never just the average</td></tr>
+        <tr><td>3</td><td>Warm up before measuring</td></tr>
+        <tr><td>4</td><td>Release build, and make sure the work is not optimised away</td></tr>
+        <tr><td>5</td><td>Record into an in-memory histogram; no I/O inside the measured loop</td></tr>
+        <tr><td>6</td><td>Test back-to-back and scheduled or bursty arrivals</td></tr>
+        <tr><td>7</td><td>The same seeded workload for every run and every version; record the machine</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="lat-check"><span class="num">?</span>Check yourself (topic 2)</h2>
+    <details><summary>1. An engine needs 2 µs per order on one thread. What is its maximum throughput?</summary><p>1,000,000 ÷ 2 = 500,000 orders per second.</p></details>
+    <details><summary>2. Why does an engine that is 100% busy behave badly during a burst?</summary><p>It has no free moment to work through the extra orders, so the queue never shrinks and every later order inherits the delay. Try 100% in the simulator in 2.1.</p></details>
+    <details><summary>3. Latencies 2, 2, 3, 2, 2, 3, 2, 2, 2, 180 µs: average, p50 and max?</summary><p>Average 20 µs, p50 2 µs, max 180 µs. The average describes none of the orders.</p></details>
+    <details><summary>4. Out of 1,000,000 orders, p99.9 = 8 µs. What does that tell you?</summary><p>999,000 orders took 8 µs or less; the slowest 1,000 took longer.</p></details>
+    <details><summary>5. Why can a linked list be slower than an array, even though it does fewer steps?</summary><p>Its nodes are scattered, so each step can be a cache miss of about 100 ns. An array's elements share cache lines, and the CPU prefetches them.</p></details>
+    <details><summary>6. How do we avoid a slow hash map growth while the engine is trading?</summary><p>Reserve the full size at startup, or use a direct-index array if the engine assigns sequential IDs.</p></details>
+    <details><summary>7. Why can't a single hash map lookup be timed on its own on the M2?</summary><p>The timer moves in steps of 41.67 ns and reading it costs about 18 ns, while a lookup takes a few ns. Time many lookups and divide.</p></details>
+    <details><summary>8. Why warm up, and why never benchmark a debug build?</summary><p>The first run was 5× slower in our test, and the debug build about 50× slower than the release build. Neither says anything about the real engine.</p></details>
+
     <h2 id="next"><span class="num">→</span>What comes next</h2>
-    <p><b>Topic 2: latency.</b> What "fast" means for an engine (microseconds, percentiles, tail latency), and where the time actually goes: memory, cache misses and allocation. It picks up exactly where the second catch above leaves off.</p>
+    <p><b>Topic 3: determinism.</b> Why the same orders must always produce exactly the same trades, and what can quietly break that (time, randomness, hash map ordering, floating-point prices). It is also what makes rule 7 above possible: comparing versions on the same workload.</p>
     <p class="muted">The Markdown version of this step is <code>docs/steps/04-why-a-computer-engineering-problem.md</code>.</p>
   </main>
 </div>
@@ -845,6 +1121,86 @@ price 103 :  C (2)</pre>
   $("p2-back").onclick = () => { if (p2.steps && p2.i >= 0) { p2.i--; p2Render(); } };
   $("p2-finish").onclick = () => { if (p2.steps) { p2.i = p2.steps.length - 1; p2Render(); } };
   p2Reset();
+
+  /* ================= Topic 2: charts ================= */
+  function barChart(el, vals, opt) {
+    const W = 720, H = 250, L = 44, R = 70, T = 30, B = 26, n = vals.length;
+    const vmax = Math.max(...vals, ...(opt.lines || []).map((l) => l.v), 1e-9);
+    const y = (v) => T + (H - T - B) * (1 - v / vmax);
+    const bw = (W - L - R) / n, gap = n > 60 ? 0.15 : Math.min(4, bw * 0.25);
+    let out = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.label || "chart")}">`;
+    [0, 0.5, 1].forEach((f) => { const v = vmax * f; out += `<line class="axis" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v)}</text>`; });
+    vals.forEach((v, i) => { const h = Math.max(1, y(0) - y(v)); out += `<rect class="bar ${opt.cls ? opt.cls(i) : ""}" x="${L + i * bw + gap / 2}" y="${y(0) - h}" width="${Math.max(0.6, bw - gap)}" height="${h}"><title>${opt.tip ? opt.tip(i, v) : fmt(v)}</title></rect>`; });
+    (opt.lines || []).forEach((l, k) => { out += `<line class="ln ${l.cls}" x1="${L}" x2="${W - R}" y1="${y(l.v)}" y2="${y(l.v)}"/><text class="${l.cls}" x="${W - R + 6}" y="${y(l.v) + 4 + (opt.nudge ? opt.nudge(k) : 0)}">${l.label}</text>`; });
+    out += `<text x="${L}" y="${H - 6}">${esc(opt.xlabel || "")}</text><text x="${L}" y="14">latency (µs)</text></svg>`;
+    el.innerHTML = out;
+  }
+  function fmt(v) { return v >= 100 ? Math.round(v).toString() : v >= 10 ? v.toFixed(1).replace(/\.0$/, "") : v.toFixed(2).replace(/0$/, "").replace(/\.0$/, ""); }
+  const pick = (sorted, p) => sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1))];
+  const statHTML = (cls, val, name, meaning) => `<div class="stat ${cls}"><span>${name}</span><b>${val}</b><span>${meaning}</span></div>`;
+
+  /* percentile explorer */
+  function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  const PRESETS = {
+    ten: () => [2, 2, 3, 2, 2, 3, 2, 2, 2, 180],
+    hundred: () => { const r = rng(4), a = []; for (let i = 0; i < 99; i++) a.push(2 + Math.round(r() * 10) / 10); a.splice(63, 0, 180); return a; },
+    tail: () => { const r = rng(9), a = []; for (let i = 0; i < 100; i++) { const u = r(); a.push(u < 0.9 ? 2 + Math.round(r() * 10) / 10 : u < 0.99 ? 8 + Math.round(r() * 300) / 10 : 400); } return a; },
+    flat: () => { const r = rng(2), a = []; for (let i = 0; i < 100; i++) a.push(2 + Math.round(r() * 8) / 10); return a; },
+  };
+  function pctRender() {
+    const raw = $("pct-in").value.split(/[\s,;]+/).filter(Boolean).map(Number).filter((x) => isFinite(x) && x >= 0).slice(0, 500);
+    if (!raw.length) { $("pct-stats").innerHTML = ""; $("pct-chart").innerHTML = ""; $("pct-note").textContent = "Type at least one number (latencies in µs)."; return; }
+    const sorted = [...raw].sort((a, b) => a - b), n = sorted.length;
+    const avg = raw.reduce((a, b) => a + b, 0) / n, p50 = pick(sorted, 50), p90 = pick(sorted, 90), p99 = pick(sorted, 99), mx = sorted[n - 1];
+    $("pct-stats").innerHTML =
+      statHTML("avg", fmt(avg) + " µs", "average", "sum ÷ count") +
+      statHTML("p50", fmt(p50) + " µs", "p50 (median)", "half took this or less") +
+      statHTML("", fmt(p90) + " µs", "p90", "90% took this or less") +
+      statHTML("p99", fmt(p99) + " µs", "p99", "99% took this or less") +
+      statHTML("max", fmt(mx) + " µs", "max", "the slowest one");
+    barChart($("pct-chart"), sorted, {
+      label: "sorted latencies", xlabel: `${n} samples, sorted from fastest (left) to slowest (right)`,
+      lines: [{ v: avg, label: "average", cls: "avg" }, { v: p50, label: "p50", cls: "p50" }, { v: p99, label: "p99", cls: "p99" }],
+      nudge: (k) => [0, 12, -12][k], tip: (i, v) => `#${i + 1} of ${n}: ${fmt(v)} µs`,
+    });
+    const below = raw.filter((x) => x < avg).length;
+    $("pct-note").innerHTML = mx > 3 * p50
+      ? `<b>${below} of ${n}</b> samples are faster than the average. The average (${fmt(avg)} µs) is pulled up by a few slow ones and describes almost nobody, while p50 (${fmt(p50)} µs) shows the normal case and p99 / max (${fmt(p99)} / ${fmt(mx)} µs) show the tail.`
+      : `All samples are close together, so the average (${fmt(avg)} µs) and p50 (${fmt(p50)} µs) agree. Averages only mislead when there is a tail.`;
+  }
+  document.querySelectorAll("[data-preset]").forEach((b) => b.onclick = () => { $("pct-in").value = PRESETS[b.dataset.preset]().join(" "); pctRender(); });
+  $("pct-in").oninput = pctRender;
+  $("pct-in").value = PRESETS.ten().join(" "); pctRender();
+
+  /* queue simulator: 120 orders at a steady rate, 2 µs each, plus an optional burst of 10 at order 30 */
+  let qUtil = 0.5;
+  function qRender() {
+    const S = 2, N = 120, AT = 30, gapT = S / qUtil, burst = $("q-burst").checked;
+    const arr = [];
+    for (let i = 0; i < N; i++) { arr.push({ t: i * gapT, b: false }); if (burst && i === AT) for (let k = 0; k < 10; k++) arr.push({ t: i * gapT, b: true }); }
+    let free = 0; const lat = arr.map((o) => { const start = Math.max(o.t, free); free = start + S; return free - o.t; });
+    const worst = Math.max(...lat), slowed = lat.filter((x) => x > S + 1e-9).length;
+    let cleared = -1; if (burst) { for (let i = AT + 11; i < lat.length; i++) if (lat[i] <= S + 1e-9) { cleared = i - (AT + 11) + 1; break; } }
+    const lastLat = lat[lat.length - 1];
+    $("q-stats").innerHTML =
+      statHTML("p50", "2 µs", "own work per order", "service time") +
+      statHTML("", (1e6 / gapT).toLocaleString("en-US", { maximumFractionDigits: 0 }) + "/s", "orders arriving", `${Math.round(qUtil * 100)}% of the 500,000/s maximum`) +
+      statHTML("max", fmt(worst) + " µs", "worst latency", "own work + waiting") +
+      statHTML("p99", String(slowed), "orders that waited", `out of ${lat.length}`);
+    barChart($("q-chart"), lat, {
+      label: "latency per order", xlabel: "orders in arrival order →  (red = the burst)",
+      cls: (i) => (arr[i].b ? "burst" : ""), tip: (i, v) => `order ${i + 1}${arr[i].b ? " (burst)" : ""}: ${fmt(v)} µs`,
+    });
+    let note;
+    if (!burst) note = "Without a burst, every order takes exactly its own 2 µs, even at 100% busy, because orders arrive exactly as fast as they are served. Now turn the burst on.";
+    else if (cleared > 0) note = `The burst arrived at order ${AT + 1}. The queue was cleared <b>${cleared} orders later</b>, thanks to the spare time between orders (headroom). Try a higher busy %.`;
+    else if (qUtil >= 1) note = `At 100% busy there is <b>no spare time at all</b>: the queue from the burst never shrinks, and every later order still takes ${fmt(lastLat)} µs instead of 2.`;
+    else note = `At ${Math.round(qUtil * 100)}% busy the queue is <b>still not cleared</b> by the last order (still ${fmt(lastLat)} µs). The little headroom drains it very slowly.`;
+    $("q-note").innerHTML = note;
+  }
+  document.querySelectorAll("#q-util button").forEach((b) => b.onclick = () => { qUtil = parseFloat(b.dataset.v); document.querySelectorAll("#q-util button").forEach((x) => x.classList.toggle("on", x === b)); qRender(); });
+  $("q-burst").onchange = qRender;
+  qRender();
 })();
 </script>
 </body>
