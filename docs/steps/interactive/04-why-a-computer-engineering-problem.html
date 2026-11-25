@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step 04 · Why It Is Hard</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee8; --text: #1d1d1b; --muted: #5f5d57;
+    --border: #e2dfd6; --accent: #2f5bd3; --accent-soft: #e6ecfb;
+    --buy: #1f7a4a; --buy-soft: #e2f3e9; --sell: #b8401f; --sell-soft: #fbe8e1;
+    --amber: #8a6200; --amber-soft: #fbf1d6; --trade: #6b3fd1; --trade-soft: #efe8fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151514; --surface: #1e1e1c; --surface-2: #262623; --text: #ecebe6; --muted: #a6a39b;
+      --border: #34332f; --accent: #8aa8ff; --accent-soft: #232c45;
+      --buy: #7fd3a0; --buy-soft: #1b3125; --sell: #ff9a7a; --sell-soft: #3a231b;
+      --amber: #f2c45a; --amber-soft: #352c14; --trade: #b9a0ff; --trade-soft: #2a2340;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+  .layout { display: grid; grid-template-columns: 230px 1fr; max-width: 1180px; margin: 0 auto; gap: 40px; padding: 32px 24px 80px; }
+  nav { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  nav .brand { font-weight: 700; }
+  nav .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; }
+  nav a:hover { background: var(--surface-2); color: var(--text); }
+  main { min-width: 0; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 21px; margin: 56px 0 8px; scroll-margin-top: 24px; }
+  h2 .num { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  .lead { color: var(--muted); font-size: 17px; margin: 0 0 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .key { background: var(--accent-soft); border-radius: 12px; padding: 14px 18px; margin: 14px 0; }
+  .key b:first-child { color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+  code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+  pre { font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2); border-radius: 10px; padding: 12px 16px; overflow-x: auto; margin: 10px 0; }
+  .muted { color: var(--muted); }
+  .sell { color: var(--sell); font-weight: 600; } .buy { color: var(--buy); font-weight: 600; } .tr { color: var(--trade); font-weight: 600; }
+
+  table.t { width: 100%; border-collapse: collapse; font-size: 14.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table.t th, table.t td { text-align: left; padding: 9px 14px; border-top: 1px solid var(--border); vertical-align: top; }
+  table.t thead th { border-top: none; background: var(--surface-2); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.t td.good { color: var(--buy); font-weight: 600; } table.t td.bad { color: var(--sell); font-weight: 600; }
+  .table-wrap { overflow-x: auto; margin: 10px 0; }
+
+  /* controls */
+  label { display: block; font-size: 12.5px; color: var(--muted); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .btn { font: inherit; font-size: 14px; font-weight: 600; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.buyb { background: var(--buy); color: #fff; border-color: var(--buy); }
+  .btn.sellb { background: var(--sell); color: #fff; border-color: var(--sell); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary, :root:not([data-theme="light"]) .btn.buyb, :root:not([data-theme="light"]) .btn.sellb { color: #111; } }
+  .btn:disabled { opacity: .4; cursor: default; }
+  select, input[type=number] { font: inherit; font-size: 14px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
+  input[type=number] { width: 76px; }
+  .ops { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ops .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--surface-2); border-radius: 10px; padding: 6px 8px; max-width: 100%; }
+  .seg { display: inline-grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border-radius: 8px; padding: 3px; gap: 3px; }
+  .seg button { background: transparent; color: var(--muted); border: 0; padding: 5px 14px; border-radius: 6px; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .seg button.on { background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .seg button.on.b { color: var(--buy); } .seg button.on.s { color: var(--sell); }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 2px solid transparent; }
+  .legend .l-scan::before { border-color: var(--amber); background: var(--amber-soft); }
+  .legend .l-target::before { border-color: var(--accent); background: var(--accent-soft); }
+  .legend .l-moved::before { background: var(--trade-soft); border-color: var(--trade); }
+  .legend .l-added::before { background: var(--buy-soft); border-color: var(--buy); }
+
+  /* part 1: array cells */
+  .cells { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .cell { border: 2px solid var(--border); border-radius: 8px; padding: 3px 10px; background: var(--surface); font-variant-numeric: tabular-nums; font-size: 13.5px; line-height: 1.35; text-align: center; min-width: 58px; }
+  .cell b { display: block; font-size: 15px; }
+  .cell.scan { border-color: var(--amber); background: var(--amber-soft); }
+  .cell.target { border-color: var(--accent); background: var(--accent-soft); }
+  .cell.moved { border-color: var(--trade); background: var(--trade-soft); }
+  .cell.added { border-color: var(--buy); background: var(--buy-soft); }
+  .lk { color: var(--muted); font-size: 15px; }
+  .kv { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  .kv i { font-style: normal; font-weight: 600; color: var(--text); font-size: 13px; }
+  .cell.big { padding: 6px 16px; } .cell.big b { font-size: 20px; } .cell.big .kv { font-size: 13px; } .cell.big .kv i { font-size: 15px; }
+  .anno { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; } .anno dl.fields { flex: 1 1 200px; margin-top: 0; }
+  .p1lvl .lp small, .lvl .lp small:first-child { display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); line-height: 1.2; }
+  dl.fields dt.sell { color: var(--sell); } dl.fields dt.buy { color: var(--buy); }
+  .view { margin-top: 12px; }
+  .view-h { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; align-items: baseline; margin-bottom: 8px; }
+  .costs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cost { font-size: 12.5px; background: var(--surface-2); border-radius: 99px; padding: 2px 10px; color: var(--muted); }
+  .cost b { color: var(--text); }
+  .cost.hot b { color: var(--sell); }
+  .note { font-size: 14px; color: var(--muted); margin: 8px 0 0; }
+  .gone-pill { font-size: 12px; font-weight: 600; background: var(--sell-soft); color: var(--sell); border-radius: 99px; padding: 2px 9px; }
+  .p1lvl { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+  .p1lvl .lp { font-weight: 700; font-variant-numeric: tabular-nums; width: 54px; text-align: right; border-radius: 6px; padding: 2px 6px; border: 2px solid transparent; }
+  .p1lvl .lp.scan { border-color: var(--amber); background: var(--amber-soft); }
+  .p1lvl .lp.target { border-color: var(--accent); background: var(--accent-soft); }
+  .p1lvl .lp.moved { border-color: var(--trade); background: var(--trade-soft); }
+  .p1lvl .lp.added { border-color: var(--buy); background: var(--buy-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; border: 2px solid var(--border); border-radius: 7px; padding: 2px 8px; background: var(--surface); }
+  .chip.scan { border-color: var(--amber); background: var(--amber-soft); }
+  .chip.target { border-color: var(--accent); background: var(--accent-soft); }
+  .chip.added { border-color: var(--buy); background: var(--buy-soft); }
+  .chip.gone { text-decoration: line-through; opacity: .6; border-style: dashed; }
+  .chip.stale { border-color: var(--amber); background: var(--amber-soft); border-style: dashed; }
+  .msg { font-size: 14px; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); margin-top: 10px; }
+
+  /* part 2: live book */
+  .book2 { font-variant-numeric: tabular-nums; }
+  .side-h { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 6px 0 4px; }
+  .lvl { display: grid; grid-template-columns: 84px 1fr; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 10px; margin-bottom: 4px; border: 2px solid transparent; }
+  .lvl.a { background: var(--sell-soft); } .lvl.b { background: var(--buy-soft); }
+  .lvl.hl { border-color: var(--amber); }
+  .lvl .lp { font-weight: 700; font-size: 17px; line-height: 1.2; }
+  .lvl .lp small { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+  .ht { font-size: 12px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .node { border: 2px solid var(--border); background: var(--surface); border-radius: 9px; padding: 3px 9px; line-height: 1.3; min-width: 92px; }
+  .node .nid { font-weight: 700; font-size: 15px; }
+  .node .nid .q { font-weight: 600; color: var(--muted); margin-left: 6px; font-size: 13.5px; }
+  .node .ptr { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); white-space: nowrap; }
+  .node.hl { border-color: var(--amber); background: var(--amber-soft); }
+  .node.trade { border-color: var(--trade); background: var(--trade-soft); }
+  .node.new { border-color: var(--buy); background: var(--buy-soft); }
+  .spread { text-align: center; color: var(--muted); font-size: 13px; padding: 6px; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); margin: 8px 0; }
+  .empty { color: var(--muted); font-size: 13px; padding: 6px 10px; }
+  .below { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 14px; }
+  .stepbox { background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 12px 16px; margin: 12px 0; }
+  .stepbox .cnt { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+  .stepbox .txt { margin: 4px 0 10px; }
+  .stepbox .ctl { display: flex; gap: 8px; flex-wrap: wrap; }
+  .log { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; max-height: 220px; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; }
+  .log div { padding: 1px 0; }
+  .log .t { color: var(--trade); font-weight: 600; } .log .r { color: var(--muted); }
+  .map2 { display: flex; flex-direction: column; gap: 5px; }
+  .map2 .chip { display: block; }
+
+  /* anatomy */
+  .anat { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  dl.fields { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 10px 0 0; font-size: 14px; }
+  dl.fields dt { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2); border-radius: 5px; padding: 1px 7px; align-self: start; white-space: nowrap; justify-self: start; }
+  dl.fields dd { margin: 0; color: var(--muted); }
+
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 0; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; padding: 20px 16px 60px; gap: 0; }
+    nav { position: static; margin-bottom: 8px; } nav .links { display: flex; flex-wrap: wrap; gap: 2px; }
+    .below { grid-template-columns: 1fr; }
+    table.example th:nth-child(4), table.example td:nth-child(4), table.example th:nth-child(5), table.example td:nth-child(5) { display: none; }
+    .lvl { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="brand">Step 04</div>
+    <div class="sub">Why this is a computer engineering problem</div>
+    <div class="links">
+      <a href="#start">Start here</a>
+      <a href="#topics">The five topics</a>
+      <a href="#ops">1.1 · Three operations</a>
+      <a href="#arrays">1.2 · Why not an array?</a>
+      <a href="#levels">1.3 · Price levels</a>
+      <a href="#cancel">1.4 · Fixing cancel</a>
+      <a href="#whole">1.5 · The whole book</a>
+      <a href="#live">1.6 · Try it: live book</a>
+      <a href="#catches">1.7 · Two catches</a>
+      <a href="#check">Check yourself</a>
+      <a href="#next">What comes next</a>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Why a matching engine is a computer engineering problem</h1>
+    <p class="lead">Matching orders sounds simple: put buyers and sellers together. The hard part is doing it correctly, very fast, for every single message. This page works through the first difficulty, the data structures behind the order book, from the simplest idea to the design real engines use.</p>
+
+    <!-- START HERE -->
+    <h2 id="start"><span class="num">0</span>Start here: how to read this page</h2>
+    <p>No finance background is needed. This page asks one question: <b>how should a program store the orders waiting at an exchange, so that it can react to every new message very quickly?</b> Everything below uses the same small example. This section explains what every letter, number and block means.</p>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>What one block means</h3>
+        <div class="anno">
+          <div class="cell big"><b>A</b><span class="kv">price <i>101</i></span><span class="kv">qty <i>5</i></span></div>
+          <dl class="fields">
+            <dt>A</dt><dd>the order's <b>ID</b>, its name. Letters follow arrival order: A came first, then B, then C…</dd>
+            <dt>price</dt><dd>the price per share, in whole numbers. Think of 101 as ₺101.</dd>
+            <dt>qty</dt><dd><b>quantity</b>: how many shares the order wants to trade.</dd>
+          </dl>
+        </div>
+        <p class="note" style="margin-top:12px">So this block reads: <b>"order A: someone wants to sell 5 shares, at 101 or more each."</b></p>
+      </div>
+      <div class="card">
+        <h3>Buyers and sellers</h3>
+        <dl class="fields">
+          <dt class="sell">ask</dt><dd>a <b>sell</b> order: "I'll sell, for at least this price."</dd>
+          <dt class="buy">bid</dt><dd>a <b>buy</b> order: "I'll buy, for at most this price."</dd>
+          <dt>best ask</dt><dd>the <b>cheapest</b> seller (the lowest ask).</dd>
+          <dt>best bid</dt><dd>the buyer who <b>pays most</b> (the highest bid).</dd>
+          <dt>trade</dt><dd>happens when a buyer's price reaches a seller's price. The price used is the one of the order that was already waiting.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <h3 style="margin-top:18px">The example used everywhere on this page</h3>
+    <div class="table-wrap"><table class="t example">
+      <thead><tr><th>Order</th><th>Side</th><th>In plain words</th><th>Price</th><th>Qty</th><th>Arrived</th></tr></thead>
+      <tbody>
+        <tr><td><b>A</b></td><td class="sell">sell</td><td>sell 5 shares, at 101 or more</td><td>101</td><td>5</td><td>1st</td></tr>
+        <tr><td><b>B</b></td><td class="sell">sell</td><td>sell 10 shares, at 102 or more</td><td>102</td><td>10</td><td>2nd</td></tr>
+        <tr><td><b>C</b></td><td class="sell">sell</td><td>sell 2 shares, at 103 or more</td><td>103</td><td>2</td><td>3rd</td></tr>
+        <tr><td><b>D</b></td><td class="sell">sell</td><td>sell 3 shares, at 101 or more</td><td>101</td><td>3</td><td>4th</td></tr>
+        <tr><td><b>E</b></td><td class="sell">sell</td><td>sell 4 shares, at 102 or more</td><td>102</td><td>4</td><td>5th</td></tr>
+        <tr><td><b>F</b></td><td class="sell">sell</td><td>sell 6 shares, at 102 or more</td><td>102</td><td>6</td><td>6th</td></tr>
+        <tr><td><b>G</b></td><td class="buy">buy</td><td>buy 7 shares, at 100 or less</td><td>100</td><td>7</td><td>7th</td></tr>
+        <tr><td><b>H</b></td><td class="buy">buy</td><td>buy 4 shares, at 99 or less</td><td>99</td><td>4</td><td>8th</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="margin-top:0">Section 1.2 uses only the first four sellers (A to D) to keep it small. The live book in 1.6 uses all eight. Nobody trades yet: the cheapest seller wants 101 and the best buyer offers only 100.</p>
+
+    <h3 style="margin-top:18px">The three shapes you will see</h3>
+    <div class="grid2">
+      <div class="card"><h3>An array</h3>
+        <div class="cells"><div class="cell"><b>A</b><span class="kv">price <i>101</i></span><span class="kv">qty <i>5</i></span></div><div class="cell"><b>B</b><span class="kv">price <i>102</i></span><span class="kv">qty <i>10</i></span></div><span class="muted">…</span></div>
+        <p class="note">Orders stored next to each other in memory, like a row of boxes.</p></div>
+      <div class="card"><h3>A price level</h3>
+        <div class="p1lvl"><span class="lp"><small>price</small>101</span><span class="cells"><div class="cell"><b>A</b><span class="kv">qty <i>5</i></span></div><span class="lk">⇄</span><div class="cell"><b>D</b><span class="kv">qty <i>3</i></span></div></span></div>
+        <p class="note">All orders waiting at one price, in a line: the oldest on the left trades first. <span class="lk">⇄</span> means "linked to the next one".</p></div>
+      <div class="card"><h3>A linked-list node</h3>
+        <div class="chain"><div class="node"><div class="nid">E<span class="q">qty 4</span></div><div class="ptr">prev B · next F</div></div></div>
+        <p class="note">Order E remembers its neighbours: <code>prev</code> is the order before it (B), <code>next</code> the one after it (F). <code>∅</code> means "none".</p></div>
+    </div>
+
+    <div class="grid2" style="margin-top:4px">
+      <div class="card"><h3>Colours</h3>
+        <div class="legend" style="margin:0"><span class="l-scan">looked at or changed</span><span class="l-target">found / used</span><span class="l-moved">had to move, or trading</span><span class="l-added">newly added</span></div>
+        <p class="note">The colours show the <b>work</b> the program did. Fewer coloured blocks means a faster structure.</p></div>
+      <div class="card"><h3>Counting work: O(…)</h3>
+        <dl class="fields">
+          <dt>n</dt><dd>number of orders in the book (a busy one: ~100,000)</dd>
+          <dt>L</dt><dd>number of different prices (~200)</dd>
+          <dt>O(1)</dt><dd>the same tiny work, however big the book is</dd>
+          <dt>O(log n)</dt><dd>grows very slowly: 100,000 orders need ~17 steps</dd>
+          <dt>O(n)</dt><dd>grows with the book: 10× more orders, 10× more work</dd>
+        </dl></div>
+    </div>
+    <div class="key"><b>How to use this page.</b> Read 1.1 to 1.5 in order; each one fixes a problem of the one before. Two parts are interactive: <b>1.2</b> compares three ways of storing the same orders, and <b>1.6</b> runs the final design step by step.</div>
+
+    <h2 id="topics"><span class="num">·</span>The five topics of this step</h2>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>#</th><th>Topic</th><th>Question</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>Data structures</b></td><td>How does the engine keep the book so every operation is fast?</td><td>This page</td></tr>
+        <tr><td>2</td><td>Latency</td><td>What does "fast" mean, and where does the time go?</td><td class="muted">Next</td></tr>
+        <tr><td>3</td><td>Determinism</td><td>Why must the same input always give the same trades?</td><td class="muted">Planned</td></tr>
+        <tr><td>4</td><td>Crash recovery</td><td>How do an event log and replay rebuild the exact state?</td><td class="muted">Planned</td></tr>
+        <tr><td>5</td><td>Concurrency</td><td>Why do engines match on a single thread?</td><td class="muted">Planned</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 1.1 -->
+    <h2 id="ops"><span class="num">1.1</span>What the engine does, again and again</h2>
+    <p>Almost every message makes the engine do one of three things:</p>
+    <div class="grid2">
+      <div class="card"><h3>1 · Find the best price</h3><span class="muted">Lowest ask or highest bid. Needed for every incoming order, to see whether it can trade.</span></div>
+      <div class="card"><h3>2 · Take the oldest order there</h3><span class="muted">Price-time priority: at the best price, the order that came first trades first.</span></div>
+      <div class="card"><h3>3 · Find any order by ID and remove it</h3><span class="muted">Every cancel or modify. The order can be anywhere in the book, and cancels are a large share of real traffic.</span></div>
+    </div>
+    <div class="key"><b>Which side is "best"?</b> For sell orders (asks) the best price is the <span class="sell">lowest</span>: a buyer wants the cheapest seller. For buy orders (bids) the best price is the <span class="buy">highest</span>: a seller wants the buyer who pays most. Each side keeps its own structure.</div>
+
+    <!-- 1.2 -->
+    <h2 id="arrays"><span class="num">1.2</span>Why not just an array? Try it</h2>
+    <p>Below, the same four <span class="sell">sell orders</span> (A, B, C, D from the table in "Start here") are stored three different ways. Press a button and compare how much work each structure has to do for the same job.</p>
+    <div class="grid2">
+      <div class="card"><h3>What the buttons mean</h3>
+        <dl class="fields">
+          <dt>Find best price</dt><dd>find the cheapest seller (operation 1)</dd>
+          <dt>Fill best order</dt><dd>a buyer takes the cheapest seller's whole order, so it leaves the book (operation 2)</dd>
+          <dt>Insert</dt><dd>a new seller arrives with a price and a quantity</dd>
+          <dt>Cancel</dt><dd>a seller withdraws an order, given only its ID (operation 3)</dd>
+        </dl></div>
+      <div class="card"><h3>What to look for</h3>Each structure shows a counter: how many orders it <b>looked at</b> and how many it had to <b>shift</b> (move to another slot). Try <b>Cancel</b> on different orders: the arrays look through orders one by one, while the bottom structure jumps straight to the right one.</div>
+    </div>
+
+    <div class="card">
+      <div class="ops">
+        <button class="btn" id="p1-best">Find best price</button>
+        <button class="btn" id="p1-fill">Fill best order</button>
+        <span class="grp">Insert a sell order: price
+          <select id="p1-price"></select> qty <input type="number" id="p1-qty" value="4" min="1" max="99">
+          <button class="btn" id="p1-ins">Insert</button></span>
+        <span class="grp">Cancel order <select id="p1-cid"></select><button class="btn" id="p1-can">Cancel</button></span>
+        <button class="btn" id="p1-reset">Reset</button>
+      </div>
+      <div class="legend"><span class="l-scan">looked at</span><span class="l-target">found / used</span><span class="l-moved">had to shift</span><span class="l-added">newly added</span></div>
+      <div id="p1-msg"></div>
+      <div id="p1-views"></div>
+    </div>
+
+    <h3 style="margin-top:22px">The same operations on a busy book</h3>
+    <p class="muted" style="margin-top:0">Worst case with n = 100,000 orders spread over L = 200 price levels. This is the gap that the small example above only hints at.</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Operation</th><th>Unsorted array</th><th>Sorted array</th><th>Price levels + list + map</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Best price</td><td class="bad">100,000 looks</td><td class="good">1 look</td><td class="good">1 look</td></tr>
+        <tr><td>2 · Fill and remove the best order</td><td class="bad">100,000 looks + up to 99,999 shifts</td><td class="bad">1 look + 99,999 shifts</td><td class="good">1 look + 3 updates (+ up to 199 level shifts if the level empties)</td></tr>
+        <tr><td>Insert a new order</td><td class="good">1 write</td><td class="bad">17 looks + up to 100,000 shifts</td><td class="good">8 looks + 4 updates (+ up to 200 level shifts for a brand-new price)</td></tr>
+        <tr><td>3 · Cancel by ID</td><td class="bad">up to 100,000 looks + 99,999 shifts</td><td class="bad">up to 100,000 looks + 99,999 shifts</td><td class="good">1 look + 3 updates</td></tr>
+      </tbody>
+    </table></div>
+    <div class="key"><b>The lesson.</b> Sorting makes <i>reading</i> fast, but any change in the <i>middle</i> of a contiguous array costs O(n), because everything behind it has to shift. A deque does not help: it is only fast at its two ends. Storing the sorted array in reverse (best price at the end) makes removing the best order O(1), but cancel and insert in the middle stay O(n).</div>
+    <p class="muted">Side note for topic 2: shifting is a <code>memmove</code> over contiguous memory, which CPUs do very fast. For a small n, an O(n) array can beat an O(log n) tree in real nanoseconds. Big-O shows how cost grows, not the actual time, which is why this project measures.</p>
+
+    <!-- 1.3 -->
+    <h2 id="levels"><span class="num">1.3</span>Price levels: sort prices, not orders</h2>
+    <p>Many orders share the same price. A busy book might hold 100,000 orders but only about 200 distinct prices. So keep a sorted container of <b>price levels</b>, and give each level its own first-in-first-out queue:</p>
+<pre>price 101 :  A (5)   D (3)
+price 102 :  B (10)  E (4)  F (6)
+price 103 :  C (2)</pre>
+    <div class="grid2">
+      <div class="card"><h3>New order F@102</h3>Find level 102 by binary search over the levels, O(log L). Append F to the back of its queue, O(1). A brand-new price adds a level: O(L), but over ~200 levels, not 100,000 orders.</div>
+      <div class="card"><h3>A fully filled</h3>Pop it from the front of the best level, O(1). When a level becomes empty, remove it.</div>
+      <div class="card"><h3>Cancel E: still slow</h3>With only the ID we don't know E's price, so we search every level, O(n). Then removing E from the middle of its queue shifts the orders behind it, O(k).</div>
+    </div>
+    <p class="muted">This is also how Liquibook behaves: its cancel goes to the price level and then walks through the orders there one by one (<code>find_on_market</code>).</p>
+
+    <!-- 1.4 -->
+    <h2 id="cancel"><span class="num">1.4</span>Fixing cancel: a doubly linked list and a hash map</h2>
+    <p>Cancel has two separate problems, and each has a classic fix:</p>
+    <div class="grid2">
+      <div class="card"><h3>1 · Jump from the ID to the order</h3>A <b>hash map</b> from order ID to the order: O(1) lookup on average. No searching.</div>
+      <div class="card"><h3>2 · Remove from the middle without shifting</h3>A <b>doubly linked list</b>: orders live anywhere in memory and each one remembers its neighbours, <code>prev</code> and <code>next</code>.</div>
+    </div>
+    <p>Try it on level 102. Removing E changes exactly two pointers, however long the list is:</p>
+    <div class="card">
+      <div id="dll-demo"></div>
+      <div class="ops" style="margin-top:10px"><button class="btn primary" id="dll-btn">Unlink E</button><span class="muted" id="dll-note"></span></div>
+    </div>
+    <p>Both directions are needed. In a singly linked list E doesn't know who points to it, so we would have to walk from the head again. The list still works as a FIFO queue: new orders join at the <b>tail</b>, trades take from the <b>head</b>, both O(1).</p>
+    <div class="key"><b>Putting them together.</b> The hash map stores a <b>pointer to the order's node</b> in its list. Each order also keeps a pointer to <b>its price level</b>, so after unlinking it the engine can fix the level's head or tail, and remove the level if it is now empty.</div>
+
+    <!-- 1.5 -->
+    <h2 id="whole"><span class="num">1.5</span>The whole order book</h2>
+    <div class="anat">
+      <div class="card"><h3>Order node</h3><span class="muted">one per resting order</span>
+        <dl class="fields">
+          <dt>id</dt><dd>unique order ID</dd>
+          <dt>side</dt><dd>buy or sell</dd>
+          <dt>price, qty</dt><dd>its price and the quantity left</dd>
+          <dt>prev</dt><dd>previous order in its level</dd>
+          <dt>next</dt><dd>next order in its level</dd>
+          <dt>level</dt><dd>its PriceLevel</dd>
+        </dl></div>
+      <div class="card"><h3>PriceLevel</h3><span class="muted">one per price, per side</span>
+        <dl class="fields">
+          <dt>price</dt><dd>the price of this level</dd>
+          <dt>head</dt><dd>oldest order: trades take from here</dd>
+          <dt>tail</dt><dd>newest order: new orders join here</dd>
+        </dl></div>
+      <div class="card"><h3>Book</h3><span class="muted">two sides + one index</span>
+        <dl class="fields">
+          <dt>asks</dt><dd>sorted levels, lowest price first</dd>
+          <dt>bids</dt><dd>sorted levels, highest price first</dd>
+          <dt>index</dt><dd>hash map: ID → order node</dd>
+        </dl></div>
+    </div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>The book needs to be…</th><th>Structure</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr><td>sorted by <b>price</b></td><td>a sorted container of price levels</td><td>O(1) best price · O(log L) to find a level</td></tr>
+        <tr><td><b>FIFO</b> within a price</td><td>a doubly linked list per level</td><td>O(1) add at the tail · O(1) take from the head</td></tr>
+        <tr><td>findable by <b>ID</b></td><td>a hash map from ID to order node</td><td>O(1) on average</td></tr>
+      </tbody>
+    </table></div>
+    <p>These three rows are the advisor's three research questions: <b>price-level index</b>, <b>FIFO with O(1) cancel</b>, and <b>order-ID lookup</b>. In C++ the standard library already has this shape: <code>std::map</code> for the levels, <code>std::list</code> per level and <code>std::unordered_map</code> for the index. So v1 can be built from standard containers, and v3 swaps in faster versions and measures the difference.</p>
+
+    <!-- 1.6 -->
+    <h2 id="live"><span class="num">1.6</span>Try it: a live order book, one step at a time</h2>
+    <p>This is the full design from 1.5 running, with all eight orders from "Start here". Place an order or cancel one, then press <b>Next step</b> to see every change the program makes, one at a time.</p>
+    <div class="grid2">
+      <div class="card"><h3>How to read the live book</h3>
+        <dl class="fields">
+          <dt class="sell">top, red</dt><dd>sellers (asks). The cheapest is at the bottom, next to the buyers.</dd>
+          <dt class="buy">bottom, green</dt><dd>buyers (bids). The highest is at the top.</dd>
+          <dt>one row</dt><dd>one price level: the price on the left, the waiting orders in line, oldest first.</dd>
+          <dt>head / tail</dt><dd>the front of the line (trades take from here) and the back (new orders join here).</dd>
+          <dt>spread</dt><dd>the gap between the cheapest seller and the best buyer.</dd>
+        </dl></div>
+      <div class="card"><h3>Start with the replay</h3><b>"Replay BUY 12 @ 102"</b> means: a new buyer, order <b>X</b>, wants <b>12 shares</b> and will pay <b>at most 102</b> each. Press <b>Next step</b> to watch X buy from the cheapest sellers first: 5 from A and 3 from D at 101, then 4 from B at 102.
+        <p class="note">Below the book: the <b>ID index</b> (the hash map, one entry per waiting order) and <b>Events out</b>, the messages the engine reports, such as trades.</p></div>
+    </div>
+
+    <div class="card">
+      <div class="ops">
+        <button class="btn primary" id="p2-replay">Replay BUY 12 @ 102</button>
+        <button class="btn" id="p2-reset">Reset to example book</button>
+      </div>
+      <div class="ops" style="margin-top:10px">
+        <span class="grp">
+          <span class="seg" id="p2-side"><button class="b on" data-v="buy">Buy</button><button class="s" data-v="sell">Sell</button></span>
+          price <input type="number" id="p2-price" value="102" min="1" max="999">
+          qty <input type="number" id="p2-qty" value="5" min="1" max="999">
+          <button class="btn buyb" id="p2-place">Place limit order</button>
+        </span>
+        <span class="grp">Cancel <select id="p2-cid"></select><button class="btn" id="p2-cancel">Cancel order</button></span>
+      </div>
+
+      <div class="stepbox" id="p2-stepbox">
+        <div class="cnt" id="p2-cnt">Ready</div>
+        <div class="txt" id="p2-txt">Pick an operation above. Each one is shown step by step.</div>
+        <div class="ctl">
+          <button class="btn" id="p2-back">◂ Back</button>
+          <button class="btn primary" id="p2-next">Next step ▸</button>
+          <button class="btn" id="p2-finish">Finish ▸▸</button>
+        </div>
+      </div>
+
+      <div class="legend"><span class="l-scan">being looked at / changed</span><span class="l-moved">trading</span><span class="l-added">newly added</span></div>
+      <div class="book2" id="p2-book"></div>
+      <div class="below">
+        <div>
+          <div class="side-h">ID index (hash map)</div>
+          <div class="map2" id="p2-map"></div>
+        </div>
+        <div>
+          <div class="side-h">Events out</div>
+          <div class="log" id="p2-log"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.7 -->
+    <h2 id="catches"><span class="num">1.7</span>Two catches</h2>
+    <div class="grid2">
+      <div class="card"><h3>The structures must stay in sync</h3>When an order leaves the book, it must leave its list <i>and</i> the map. Forget one, and the map points to freed memory: a crash or a silently wrong trade. Rules like "every order in a list has exactly one map entry" are <b>invariants</b>. The advisor listed them as core scope, and v1's unit tests will check them. (In the live book you can see the moment between "unlink" and "erase from map": inside one operation the invariant is briefly broken, and it must hold again when the operation ends.)</div>
+      <div class="card"><h3>Linked list nodes are scattered in memory</h3>Following a pointer to a node that isn't in the CPU cache is slow. An array is one contiguous block; a list is not. This is where topic 2 (latency) starts, and why v3 tries intrusive lists and pre-allocated memory.</div>
+    </div>
+
+    <h2 id="check"><span class="num">?</span>Check yourself</h2>
+    <details><summary>1. Why is an unsorted array a bad order book, even though inserting is O(1)?</summary><p>Finding the best price and the oldest order there needs a scan of every order, O(n), on every incoming message.</p></details>
+    <details><summary>2. In a sorted array, why is cancel still O(n)?</summary><p>It is sorted by price, but a cancel carries only an ID, so finding the order is a scan. Removing it from the middle then shifts the later elements.</p></details>
+    <details><summary>3. Why do price levels help so much?</summary><p>Many orders share a price, so the number of levels L is far smaller than the number of orders n. Sorting levels instead of orders makes the costs depend on L.</p></details>
+    <details><summary>4. Why a doubly linked list and not a singly linked one?</summary><p>To unlink a node in O(1) we must update the node before it. With only <code>next</code> pointers a node doesn't know its predecessor, so we would walk from the head.</p></details>
+    <details><summary>5. What does the hash map store, and why does each order keep a pointer to its level?</summary><p>A pointer to the order's node, so cancel jumps straight to it. The level pointer lets the engine fix the level's head or tail after unlinking, and remove the level if it became empty.</p></details>
+    <details><summary>6. A resting order is partly filled. Does it lose its place in the line?</summary><p>No. Only its quantity changes; it stays at the head with its time priority. Try it in the live book: B stays at the head after the replay.</p></details>
+
+    <h2 id="next"><span class="num">→</span>What comes next</h2>
+    <p><b>Topic 2: latency.</b> What "fast" means for an engine (microseconds, percentiles, tail latency), and where the time actually goes: memory, cache misses and allocation. It picks up exactly where the second catch above leaves off.</p>
+    <p class="muted">The Markdown version of this step is <code>docs/steps/04-why-a-computer-engineering-problem.md</code>.</p>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  /* ================= Part 1: three structures side by side ================= */
+  const P1_START = [
+    { id: "A", price: 101, qty: 5, t: 1 },
+    { id: "B", price: 102, qty: 10, t: 2 },
+    { id: "C", price: 103, qty: 2, t: 3 },
+    { id: "D", price: 101, qty: 3, t: 4 },
+  ];
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let p1 = null;
+
+  function p1Reset() {
+    p1 = { orders: clone(P1_START), nextT: 5, nextIdx: 4, last: null, msg: "" };
+    p1Render();
+  }
+  function p1NextId() {
+    // IDs are never reused, like a real exchange: E, F, G, ... then N27, N28, ...
+    const i = p1.nextIdx++;
+    return i < LETTERS.length ? LETTERS[i] : "N" + (i + 1);
+  }
+  function p1Views(orders) {
+    const U = [...orders].sort((a, b) => a.t - b.t);
+    const S = [...orders].sort((a, b) => a.price - b.price || a.t - b.t);
+    const prices = [...new Set(S.map((o) => o.price))];
+    return { U, S, prices };
+  }
+  function movedSet(beforeIds, afterIds) {
+    const bi = new Map(beforeIds.map((id, i) => [id, i]));
+    const m = new Set();
+    afterIds.forEach((id, i) => { if (bi.has(id) && bi.get(id) !== i) m.add(id); });
+    return m;
+  }
+  const blank = () => ({ scan: new Set(), target: null, reads: 0, ptr: 0, note: "" });
+
+  function p1Do(op, arg) {
+    const before = p1.orders;
+    const vb = p1Views(before);
+    const n = before.length;
+    const r = { U: blank(), S: blank(), L: blank() };
+    r.L.scanLv = new Set(); r.L.targetLv = null; r.L.mapHit = null; r.L.mapGone = null; r.L.mapAdd = null;
+    let after = before, removed = null, added = null;
+    p1.msg = "";
+
+    if ((op === "best" || op === "fill") && n === 0) { p1.msg = "The book is empty. Insert an order first."; p1.last = null; return p1Render(); }
+
+    if (op === "best") {
+      const best = vb.S[0];
+      vb.U.forEach((o) => r.U.scan.add(o.id)); r.U.target = best.id; r.U.reads = n;
+      r.U.note = `Looked at all ${n} orders to find the lowest price (${best.price}), keeping the first one seen there: ${best.id}.`;
+      r.S.target = best.id; r.S.reads = 1; r.S.note = `The first element is the best ask, and the oldest order at that price: ${best.id}.`;
+      r.L.target = best.id; r.L.targetLv = best.price; r.L.reads = 1; r.L.note = `The first level is the best price; its head is the oldest order: ${best.id}.`;
+    }
+
+    if (op === "fill") {
+      const best = vb.S[0]; removed = best.id;
+      after = before.filter((o) => o.id !== best.id);
+      vb.U.forEach((o) => r.U.scan.add(o.id)); r.U.reads = n;
+      r.U.note = `Scanned all ${n} orders to find ${best.id} (best price, oldest), removed it, and every order after it shifted one slot left.`;
+      r.S.reads = 1; r.S.note = `${best.id} is the first element. Removing it shifts every other element one slot left.`;
+      const empties = !after.some((o) => o.price === best.price);
+      r.L.reads = 1; r.L.ptr = 3; r.L.mapGone = best.id;
+      r.L.note = `${best.id} is the head of level ${best.price}: 2 pointer writes to unlink it, 1 map erase.` + (empties ? ` Level ${best.price} is now empty and is removed; the levels after it shift.` : "");
+    }
+
+    if (op === "insert") {
+      const o = { id: p1NextId(), price: arg.price, qty: arg.qty, t: p1.nextT++ }; added = o.id;
+      after = [...before, o];
+      r.U.note = `Appended ${o.id} at the end. Nothing else moves; this is the one thing an unsorted array is good at.`;
+      // binary search in sorted array: first index with price > P (after equal prices = time priority)
+      let lo = 0, hi = vb.S.length; while (lo < hi) { const mid = (lo + hi) >> 1; r.S.scan.add(vb.S[mid].id); r.S.reads++; if (vb.S[mid].price <= o.price) lo = mid + 1; else hi = mid; }
+      r.S.note = `Binary search (${r.S.reads} look${r.S.reads === 1 ? "" : "s"}) found the spot after the last order at ${o.price}; every order after the spot shifted one slot right.`;
+      // binary search over levels
+      const P = vb.prices; let a = 0, b = P.length; while (a < b) { const m = (a + b) >> 1; r.L.scanLv.add(P[m]); r.L.reads++; if (P[m] < o.price) a = m + 1; else b = m; }
+      const exists = P[a] === o.price;
+      r.L.ptr = 4; r.L.mapAdd = o.id;
+      r.L.note = exists
+        ? `Binary search over ${P.length} levels (${r.L.reads} look${r.L.reads === 1 ? "" : "s"}) found level ${o.price}. ${o.id} joins its tail (3 pointer writes) and goes into the map (1).`
+        : `Binary search over ${P.length} levels (${r.L.reads} look${r.L.reads === 1 ? "" : "s"}): there is no level ${o.price}, so a new level is created and the levels after it shift. ${o.id} becomes its head and tail, and goes into the map.`;
+    }
+
+    if (op === "cancel") {
+      const id = arg.id; removed = id;
+      const iu = vb.U.findIndex((o) => o.id === id), is = vb.S.findIndex((o) => o.id === id);
+      const ord = before.find((o) => o.id === id);
+      after = before.filter((o) => o.id !== id);
+      vb.U.slice(0, iu + 1).forEach((o) => r.U.scan.add(o.id)); r.U.reads = iu + 1;
+      r.U.note = `Scanned ${iu + 1} order${iu ? "s" : ""} to find ${id}. ` + (n - iu - 1 ? `The ${n - iu - 1} after it shifted left.` : `It was the last element, so nothing shifted.`);
+      vb.S.slice(0, is + 1).forEach((o) => r.S.scan.add(o.id)); r.S.reads = is + 1;
+      r.S.note = `Sorted by price, but the cancel only says "${id}", so it is still a scan: ${is + 1} look${is ? "s" : ""}. ` + (n - is - 1 ? `The ${n - is - 1} after it shifted left.` : `It was the last element, so nothing shifted.`);
+      const empties = !after.some((o) => o.price === ord.price);
+      r.L.reads = 1; r.L.ptr = 3; r.L.mapGone = id;
+      r.L.note = `The map jumped straight to ${id} (1 look). Unlinked it with 2 pointer writes and erased it from the map.` + (empties ? ` Level ${ord.price} became empty and was removed.` : " Nothing shifted.");
+    }
+
+    const va = p1Views(after);
+    r.U.moved = movedSet(vb.U.map((o) => o.id), va.U.map((o) => o.id));
+    r.S.moved = movedSet(vb.S.map((o) => o.id), va.S.map((o) => o.id));
+    r.L.movedLv = movedSet(vb.prices, va.prices);
+    r.U.moves = r.U.moved.size; r.S.moves = r.S.moved.size; r.L.moves = r.L.movedLv.size;
+    r.L.addedLv = va.prices.filter((p) => !vb.prices.includes(p));
+    p1.orders = after;
+    p1.last = { op, r, removed, added };
+    p1Render();
+  }
+
+  function cellCls(id, v, added) {
+    if (id === added) return "added";
+    if (v.target === id) return "target";
+    if (v.moved && v.moved.has(id)) return "moved";
+    if (v.scan.has(id)) return "scan";
+    return "";
+  }
+  function costsHTML(v, isLevels) {
+    return `<span class="costs">
+      <span class="cost"><b>${v.reads}</b> looked at</span>
+      <span class="cost"><b>${v.moves}</b> ${isLevels ? (v.moves === 1 ? "level shifted" : "levels shifted") : "shifted"}</span>
+      ${isLevels ? `<span class="cost"><b>${v.ptr}</b> pointer / map updates</span>` : ""}
+    </span>`;
+  }
+  function p1Render() {
+    const v = p1Views(p1.orders);
+    const L = p1.last;
+    const r = L ? L.r : { U: { ...blank(), moved: new Set(), moves: 0 }, S: { ...blank(), moved: new Set(), moves: 0 }, L: { ...blank(), moves: 0, scanLv: new Set(), movedLv: new Set(), addedLv: [] } };
+    const added = L ? L.added : null;
+    const gone = L && L.removed ? `<span class="gone-pill">removed: ${esc(L.removed)}</span>` : "";
+    const cells = (arr, rv) => arr.length
+      ? arr.map((o) => `<div class="cell ${cellCls(o.id, rv, added)}" title="Order ${o.id}: sell ${o.qty} at ${o.price}"><b>${o.id}</b><span class="kv">price <i>${o.price}</i></span><span class="kv">qty <i>${o.qty}</i></span></div>`).join("")
+      : `<span class="muted">(empty)</span>`;
+
+    const lvRows = v.prices.map((p) => {
+      let c = "";
+      if (r.L.addedLv && r.L.addedLv.includes(p)) c = "added";
+      else if (r.L.targetLv === p) c = "target";
+      else if (r.L.movedLv && r.L.movedLv.has(p)) c = "moved";
+      else if (r.L.scanLv && r.L.scanLv.has(p)) c = "scan";
+      const os = v.S.filter((o) => o.price === p);
+      return `<div class="p1lvl"><span class="lp ${c}"><small>price</small>${p}</span><span class="cells">${os.map((o, i) => (i ? '<span class="lk">⇄</span>' : "") + `<div class="cell ${o.id === added ? "added" : r.L.target === o.id ? "target" : ""}" title="Order ${o.id}: sell ${o.qty} at ${p}"><b>${o.id}</b><span class="kv">qty <i>${o.qty}</i></span></div>`).join("")}</span></div>`;
+    }).join("") || `<span class="muted">(empty)</span>`;
+    const chipCls = (id) => (id === r.L.mapAdd ? "added" : id === r.L.mapHit ? "target" : "");
+    const chips = v.U.map((o) => `<span class="chip ${chipCls(o.id)}">"${o.id}" → node</span>`).join("")
+      + (r.L.mapGone ? `<span class="chip gone">"${esc(r.L.mapGone)}" erased</span>` : "");
+
+    $("p1-views").innerHTML = `
+      <div class="view"><div class="view-h"><h3>Unsorted array <span class="muted" style="font-weight:400">(arrival order)</span> ${gone}</h3>${L ? costsHTML(r.U) : ""}</div>
+        <div class="cells">${cells(v.U, r.U)}</div>${L ? `<p class="note">${r.U.note}</p>` : ""}</div>
+      <div class="view"><div class="view-h"><h3>Sorted array <span class="muted" style="font-weight:400">(price low → high, then oldest first)</span> ${gone}</h3>${L ? costsHTML(r.S) : ""}</div>
+        <div class="cells">${cells(v.S, r.S)}</div>${L ? `<p class="note">${r.S.note}</p>` : ""}</div>
+      <div class="view"><div class="view-h"><h3>Price levels + linked list + hash map ${gone}</h3>${L ? costsHTML(r.L, true) : ""}</div>
+        ${lvRows}<div class="chips">${chips}</div>${L ? `<p class="note">${r.L.note}</p>` : ""}</div>`;
+    $("p1-msg").innerHTML = p1.msg ? `<div class="msg">${esc(p1.msg)}</div>` : (L ? "" : `<div class="msg">Pick an operation above.</div>`);
+    $("p1-cid").innerHTML = v.U.map((o) => `<option value="${o.id}">${o.id}: sell ${o.qty} @ ${o.price}</option>`).join("");
+    $("p1-can").disabled = v.U.length === 0;
+  }
+
+  [100, 101, 102, 103, 104, 105].forEach((p) => { $("p1-price").insertAdjacentHTML("beforeend", `<option ${p === 102 ? "selected" : ""}>${p}</option>`); });
+  $("p1-best").onclick = () => p1Do("best");
+  $("p1-fill").onclick = () => p1Do("fill");
+  $("p1-ins").onclick = () => { const q = Math.max(1, Math.min(99, parseInt($("p1-qty").value, 10) || 1)); p1Do("insert", { price: parseInt($("p1-price").value, 10), qty: q }); };
+  $("p1-can").onclick = () => { const id = $("p1-cid").value; if (id) p1Do("cancel", { id }); };
+  $("p1-reset").onclick = p1Reset;
+  p1Reset();
+
+  /* ================= Section 1.4: doubly linked list unlink demo ================= */
+  let dllRemoved = false;
+  function dllRender() {
+    const nodes = dllRemoved
+      ? [{ id: "B", q: 10, prev: "∅", next: "F", c: "hl" }, { id: "F", q: 6, prev: "B", next: "∅", c: "hl" }]
+      : [{ id: "B", q: 10, prev: "∅", next: "E", c: "" }, { id: "E", q: 4, prev: "B", next: "F", c: "" }, { id: "F", q: 6, prev: "E", next: "∅", c: "" }];
+    $("dll-demo").innerHTML = `<div class="lvl a"><div class="lp"><small>price</small>102</div><div class="chain"><span class="ht">head →</span>${nodes.map((o, i) => (i ? '<span class="lk">⇄</span>' : "") + `<div class="node ${o.c}"><div class="nid">${o.id}<span class="q">qty ${o.q}</span></div><div class="ptr">prev ${o.prev} · next ${o.next}</div></div>`).join("")}<span class="ht">← tail</span></div></div>`;
+    $("dll-btn").textContent = dllRemoved ? "Put E back" : "Unlink E";
+    $("dll-note").innerHTML = dllRemoved ? "Two writes: <code>B.next = F</code> and <code>F.prev = B</code>. Nothing moved in memory." : "";
+  }
+  $("dll-btn").onclick = () => { dllRemoved = !dllRemoved; dllRender(); };
+  dllRender();
+
+  /* ================= Part 2: live order book with step-through ================= */
+  function exampleBook() {
+    const st = { orders: {}, levels: { buy: {}, sell: {} }, index: {} };
+    const add = (id, side, price, qty) => {
+      st.orders[id] = { id, side, price, qty, prev: null, next: null };
+      st.levels[side][price] = st.levels[side][price] || { head: null, tail: null };
+      linkTail(st, id); st.index[id] = true;
+    };
+    add("A", "sell", 101, 5); add("B", "sell", 102, 10); add("C", "sell", 103, 2);
+    add("D", "sell", 101, 3); add("E", "sell", 102, 4); add("F", "sell", 102, 6);
+    add("G", "buy", 100, 7); add("H", "buy", 99, 4);
+    return st;
+  }
+  function linkTail(st, id) {
+    const o = st.orders[id], lvl = st.levels[o.side][o.price], parts = [];
+    o.prev = lvl.tail; o.next = null;
+    if (lvl.tail) { st.orders[lvl.tail].next = id; parts.push(`${lvl.tail}.next = ${id}`, `${id}.prev = ${lvl.tail}`); }
+    else { lvl.head = id; parts.push(`head of ${o.price} = ${id}`); }
+    lvl.tail = id; parts.push(`tail of ${o.price} = ${id}`);
+    return { desc: parts.join(", "), touched: [o.prev].filter(Boolean) };
+  }
+  function unlink(st, id) {
+    const o = st.orders[id], lvl = st.levels[o.side][o.price], parts = [];
+    if (o.prev) { st.orders[o.prev].next = o.next; parts.push(`${o.prev}.next = ${o.next || "∅"}`); }
+    else { lvl.head = o.next; parts.push(`head of ${o.price} = ${o.next || "∅"}`); }
+    if (o.next) { st.orders[o.next].prev = o.prev; parts.push(`${o.next}.prev = ${o.prev || "∅"}`); }
+    else { lvl.tail = o.prev; parts.push(`tail of ${o.price} = ${o.prev || "∅"}`); }
+    return { desc: parts.join(", "), touched: [o.prev, o.next].filter(Boolean) };
+  }
+  const prices = (st, side) => Object.keys(st.levels[side]).map(Number);
+  function bestPrice(st, side) {
+    const p = prices(st, side); if (!p.length) return null;
+    return side === "sell" ? Math.min(...p) : Math.max(...p);
+  }
+  const sideWord = (s) => (s === "sell" ? "ask" : "bid");
+
+  function stepsForNew(base, side, price, qty, X) {
+    const W = clone(base), steps = [];
+    const push = (text, hl, ev) => steps.push({ text, hl: hl || {}, ev: ev || null, snap: clone(W) });
+    const opp = side === "buy" ? "sell" : "buy";
+    let rem = qty;
+    push(`New order <b>${X}</b>: ${side === "buy" ? `a buyer wants <b>${qty} shares</b> and will pay <b>at most ${price}</b> each` : `a seller offers <b>${qty} shares</b> for <b>at least ${price}</b> each`}. First question: can it trade with the waiting ${opp === "sell" ? "sellers (asks)" : "buyers (bids)"}?`, {}, `NEW    ${X}: ${side} ${qty} shares, ${side === "buy" ? "max" : "min"} price ${price}`);
+    while (true) {
+      const bp = bestPrice(W, opp);
+      if (bp === null) { push(`There are no ${opp === "sell" ? "asks" : "bids"} at all, so nothing can trade.`); break; }
+      const crosses = side === "buy" ? bp <= price : bp >= price;
+      if (!crosses) {
+        push(`Best ${sideWord(opp)} is <b>${bp}</b>. ${bp} ${side === "buy" ? "&gt;" : "&lt;"} ${price}, so it does not cross. Matching stops.`, { levels: [opp + ":" + bp] });
+        break;
+      }
+      const lvl = W.levels[opp][bp], head = W.orders[lvl.head];
+      push(`Best ${sideWord(opp)} is <b>${bp}</b>; ${bp} ${side === "buy" ? "≤" : "≥"} ${price}, so it crosses. Look at the <b>head</b> of level ${bp}: <b>${head.id} (${head.qty})</b>, the oldest order there.`, { levels: [opp + ":" + bp], nodes: [head.id] });
+      const t = Math.min(rem, head.qty); rem -= t; head.qty -= t;
+      const buyer = side === "buy" ? X : head.id, seller = side === "buy" ? head.id : X;
+      push(`<b>Trade: ${buyer} buys ${t} shares from ${seller} at ${bp}</b>, the price of the order that was already waiting. ${X} still wants ${rem}; ${head.id} has ${head.qty} left.`, { nodes: [head.id], kind: "trade" }, `TRADE  ${buyer} buys ${t} from ${seller} at ${bp}`);
+      if (head.qty === 0) {
+        const u = unlink(W, head.id);
+        push(`${head.id} is fully filled, so <b>unlink it</b>: <code>${u.desc}</code>. Two pointer writes; nothing shifts. Notice the map still has "${head.id}": for a moment the two structures disagree.`, { nodes: u.touched, levels: [opp + ":" + bp], mapStale: head.id });
+        delete W.index[head.id]; delete W.orders[head.id];
+        push(`<b>Erase "${head.id}"</b> from the hash map, so list and map agree again.`, { mapGone: head.id }, `DONE   ${head.id} fully filled, leaves the book`);
+        if (!W.levels[opp][bp].head) {
+          delete W.levels[opp][bp];
+          const nb = bestPrice(W, opp);
+          push(`Level ${bp} is now <b>empty</b>, so remove it. The best ${sideWord(opp)} is now ${nb === null ? "none" : "<b>" + nb + "</b>"}.`, { levels: nb === null ? [] : [opp + ":" + nb] });
+        }
+      } else {
+        push(`${head.id} is only <b>partly filled</b>: it stays at the head with ${head.qty} left and keeps its time priority. No pointer or map changes.`, { nodes: [head.id] });
+      }
+      if (rem === 0) break;
+    }
+    if (rem > 0) {
+      if (W.levels[side][price]) {
+        push(`${X} still has ${rem} left, so it <b>rests</b> in the book. Level ${price} already exists on the ${side === "buy" ? "bid" : "ask"} side: find it with a binary search over the levels, O(log L).`, { levels: [side + ":" + price] });
+      } else {
+        W.levels[side][price] = { head: null, tail: null };
+        push(`${X} still has ${rem} left, so it <b>rests</b> in the book. There is no ${side === "buy" ? "bid" : "ask"} level ${price} yet, so <b>create it</b> in the sorted levels.`, { levels: [side + ":" + price] });
+      }
+      W.orders[X] = { id: X, side, price, qty: rem, prev: null, next: null };
+      const l = linkTail(W, X);
+      push(`<b>Append ${X} at the tail</b> of level ${price}: <code>${l.desc}</code>.`, { nodes: [X].concat(l.touched), kind: "new" });
+      W.index[X] = true;
+      push(`<b>Insert "${X}" → node</b> into the hash map, so a later cancel can find it in O(1). Done.`, { map: [X], nodes: [X], kind: "new" }, `REST   ${X} waits in the book: qty ${rem} at ${price}`);
+    } else {
+      push(`${X} is fully filled, so it <b>never enters the book</b>: no level, no list node, no map entry. Done.`, {}, `DONE   ${X} fully filled`);
+    }
+    return steps;
+  }
+
+  function stepsForCancel(base, id) {
+    const W = clone(base), steps = [];
+    const push = (text, hl, ev) => steps.push({ text, hl: hl || {}, ev: ev || null, snap: clone(W) });
+    const o = W.orders[id];
+    push(`Receive <b>CANCEL ${id}</b>. Look up "${id}" in the hash map: it points straight to the node (${sideWord(o.side)} ${o.qty} @ ${o.price}). One lookup, no searching.`, { map: [id], nodes: [id] }, `NEW    cancel request for ${id}`);
+    const u = unlink(W, id);
+    push(`<b>Unlink ${id}</b> using its own prev and next: <code>${u.desc}</code>. Nothing shifts. The map still has "${id}" until the next step.`, { nodes: u.touched, levels: [o.side + ":" + o.price], mapStale: id });
+    delete W.index[id]; delete W.orders[id];
+    push(`<b>Erase "${id}"</b> from the hash map.`, { mapGone: id }, `CANCEL ${id} removed from the book`);
+    if (!W.levels[o.side][o.price].head) {
+      delete W.levels[o.side][o.price];
+      push(`Level ${o.price} is now <b>empty</b>, so remove it. Done.`);
+    } else {
+      steps[steps.length - 1].text += " Done.";
+    }
+    return steps;
+  }
+
+  let p2 = null;
+  function p2Reset() {
+    p2 = { committed: exampleBook(), base: null, steps: null, i: -1, log: [], nextN: 0 };
+    p2.nextIdx = 0;
+    p2Render();
+  }
+  function p2NextId() {
+    // IDs are never reused: I, J, K, ... (X is kept for the replay), then N1, N2, ...
+    const pool = "IJKLMNOPQRSTUVWYZ", i = p2.nextIdx++;
+    return i < pool.length ? pool[i] : "N" + (i - pool.length + 1);
+  }
+  function p2FlushLog() {
+    if (p2.steps) p2.steps.forEach((s) => { if (s.ev) p2.log.push(s.ev); });
+  }
+  function p2Start(steps) {
+    p2FlushLog();
+    p2.base = p2.committed;
+    p2.steps = steps; p2.i = 0;
+    p2.committed = steps[steps.length - 1].snap;
+    p2Render();
+  }
+  function p2View() {
+    if (!p2.steps) return { st: p2.committed, hl: {}, evs: [] };
+    if (p2.i < 0) return { st: p2.base, hl: {}, evs: [] };
+    const s = p2.steps[p2.i];
+    return { st: s.snap, hl: s.hl, evs: p2.steps.slice(0, p2.i + 1).filter((x) => x.ev).map((x) => x.ev) };
+  }
+  function nodeHTML(o, cls) {
+    return `<div class="node ${cls}" title="Order ${o.id}: ${o.side} ${o.qty} at ${o.price}"><div class="nid">${o.id}<span class="q">qty ${o.qty}</span></div><div class="ptr">prev ${o.prev || "∅"} · next ${o.next || "∅"}</div></div>`;
+  }
+  function levelHTML(st, side, price, hl, isBest) {
+    const lvl = st.levels[side][price];
+    const chain = []; let id = lvl.head, guard = 0;
+    while (id && guard++ < 500) { chain.push(st.orders[id]); id = st.orders[id].next; }
+    const nodes = hl.nodes || [];
+    const ncls = (oid) => (nodes.includes(oid) ? (hl.kind === "trade" ? "trade" : hl.kind === "new" ? "new" : "hl") : "");
+    const lhl = (hl.levels || []).includes(side + ":" + price) ? "hl" : "";
+    return `<div class="lvl ${side === "sell" ? "a" : "b"} ${lhl}"><div class="lp"><small>price</small>${price}${isBest ? `<small>best ${sideWord(side)}</small>` : ""}</div>
+      <div class="chain"><span class="ht">head →</span>${chain.length ? chain.map((o, i) => (i ? '<span class="lk">⇄</span>' : "") + nodeHTML(o, ncls(o.id))).join("") : '<span class="muted">(empty)</span>'}<span class="ht">← tail</span></div></div>`;
+  }
+  function p2Render() {
+    const { st, hl, evs } = p2View();
+    const asks = prices(st, "sell").sort((a, b) => b - a);
+    const bids = prices(st, "buy").sort((a, b) => b - a);
+    const ba = asks.length ? asks[asks.length - 1] : null, bb = bids.length ? bids[0] : null;
+    $("p2-book").innerHTML =
+      `<div class="side-h">Asks (sell) · best ask at the bottom</div>` +
+      (asks.length ? asks.map((p) => levelHTML(st, "sell", p, hl, p === ba)).join("") : `<div class="empty">no asks</div>`) +
+      `<div class="spread">${ba !== null && bb !== null ? `spread = ${ba} − ${bb} = ${ba - bb}` : "spread: one side is empty"}</div>` +
+      `<div class="side-h">Bids (buy) · best bid at the top</div>` +
+      (bids.length ? bids.map((p) => levelHTML(st, "buy", p, hl, p === bb)).join("") : `<div class="empty">no bids</div>`);
+
+    const mapIds = Object.keys(st.index);
+    $("p2-map").innerHTML = mapIds.map((id) => {
+      const o = st.orders[id];
+      if (hl.mapStale === id) return `<span class="chip stale">"${id}" → unlinked node (erase next)</span>`;
+      const c = (hl.map || []).includes(id) ? (hl.kind === "new" ? "added" : "target") : "";
+      return `<span class="chip ${c}">"${id}" → node of ${id} (${o.side}, price ${o.price}, qty ${o.qty})</span>`;
+    }).join("") + (hl.mapGone ? `<span class="chip gone">"${esc(hl.mapGone)}" erased</span>` : "") || `<span class="muted">empty</span>`;
+
+    const all = p2.log.concat(evs);
+    $("p2-log").innerHTML = all.length ? all.map((e) => `<div class="${e.startsWith("TRADE") ? "t" : e.startsWith("NEW") ? "r" : ""}">${esc(e)}</div>`).join("") : `<div class="r">no events yet</div>`;
+    $("p2-log").scrollTop = 1e6;
+
+    if (!p2.steps) { $("p2-cnt").textContent = "Ready"; $("p2-txt").innerHTML = "Pick an operation above. Each one is shown step by step."; }
+    else if (p2.i < 0) { $("p2-cnt").textContent = `Before the operation`; $("p2-txt").innerHTML = "This is the book before the operation. Press Next step."; }
+    else { $("p2-cnt").textContent = `Step ${p2.i + 1} of ${p2.steps.length}`; $("p2-txt").innerHTML = p2.steps[p2.i].text; }
+    const active = !!p2.steps;
+    $("p2-back").disabled = !active || p2.i < 0;
+    $("p2-next").disabled = !active || p2.i >= p2.steps.length - 1;
+    $("p2-finish").disabled = !active || p2.i >= p2.steps.length - 1;
+
+    const ids = Object.keys(p2.committed.index);
+    $("p2-cid").innerHTML = ids.map((id) => { const o = p2.committed.orders[id]; return `<option value="${id}">${id}: ${o.side} ${o.qty} @ ${o.price}</option>`; }).join("");
+    $("p2-cancel").disabled = ids.length === 0;
+  }
+
+  let p2Side = "buy";
+  document.querySelectorAll("#p2-side button").forEach((b) => b.onclick = () => {
+    p2Side = b.dataset.v;
+    document.querySelectorAll("#p2-side button").forEach((x) => x.classList.toggle("on", x === b));
+    $("p2-place").className = "btn " + (p2Side === "buy" ? "buyb" : "sellb");
+  });
+  $("p2-place").onclick = () => {
+    const price = parseInt($("p2-price").value, 10), qty = parseInt($("p2-qty").value, 10);
+    if (!(price >= 1 && price <= 999) || !(qty >= 1 && qty <= 999)) { $("p2-txt").textContent = "Price and quantity must be whole numbers from 1 to 999."; return; }
+    p2Start(stepsForNew(p2.committed, p2Side, price, qty, p2NextId()));
+  };
+  $("p2-cancel").onclick = () => { const id = $("p2-cid").value; if (id && p2.committed.orders[id]) p2Start(stepsForCancel(p2.committed, id)); };
+  $("p2-replay").onclick = () => { p2Reset(); p2Start(stepsForNew(p2.committed, "buy", 102, 12, "X")); };
+  $("p2-reset").onclick = p2Reset;
+  $("p2-next").onclick = () => { if (p2.steps && p2.i < p2.steps.length - 1) { p2.i++; p2Render(); } };
+  $("p2-back").onclick = () => { if (p2.steps && p2.i >= 0) { p2.i--; p2Render(); } };
+  $("p2-finish").onclick = () => { if (p2.steps) { p2.i = p2.steps.length - 1; p2Render(); } };
+  p2Reset();
+})();
+</script>
+</body>
+</html>
