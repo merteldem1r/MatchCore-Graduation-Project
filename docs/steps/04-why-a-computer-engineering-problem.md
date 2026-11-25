@@ -1,6 +1,6 @@
 # 04 · Why This Is a Computer Engineering Problem
 
-> **Status:** in progress (topics 1 and 2 of 5 done) · **Started:** 2026-11-23 · **Interactive version (with an array comparison, a live order book, a percentile explorer and a queue simulator):** [interactive/04-why-a-computer-engineering-problem.html](interactive/04-why-a-computer-engineering-problem.html)
+> **Status:** in progress (topics 1 to 3 of 5 done) · **Started:** 2026-11-23 · **Interactive version (with an array comparison, a live order book, a percentile explorer, a queue simulator and a determinism lab):** [interactive/04-why-a-computer-engineering-problem.html](interactive/04-why-a-computer-engineering-problem.html)
 
 ## Goal of this step
 
@@ -12,8 +12,8 @@ The step is split into five topics, worked through one at a time:
 | --- | --- | --- | --- |
 | 1 | Data structures | How does the engine keep the order book so that every operation is fast? | Done |
 | 2 | Latency | What does "fast" mean here, and where does the time actually go? | Done |
-| 3 | Determinism | Why must the same input always give the same trades, and what can quietly break that? | Next |
-| 4 | Crash recovery | How does an event log and replay rebuild the exact state after a crash? | Planned |
+| 3 | Determinism | Why must the same input always give the same trades, and what can quietly break that? | Done |
+| 4 | Crash recovery | How does an event log and replay rebuild the exact state after a crash? | Next |
 | 5 | Concurrency | Why do many real engines do the matching on a single thread? | Planned |
 
 ## Content
@@ -478,7 +478,161 @@ The timer moves in steps of 41.67 ns and reading it costs about 18 ns, while the
 The first run is slower (caches and CPU not settled; 5 times slower in our test). A debug build was about 50 times slower than the release build, so it says nothing about the real engine.
 </details>
 
-### Topics 3 to 5
+### Topic 3: Determinism
+
+Topics 1 and 2 were about being **fast**. This topic is about being **exactly right, every single time**. Crash recovery (topic 4), testing, and the comparison of v1 with v3 all rest on it.
+
+#### 3.0 Start here: the words this topic uses
+
+| Word | Meaning in plain words |
+| --- | --- |
+| **Input** | Every message the engine receives, in order: new orders and cancels. |
+| **Output** | Everything the engine produces: the events (trades, "waits in the book", "cancelled"). |
+| **State** | What the engine remembers between messages: the whole order book. |
+| **Deterministic** | The same inputs, in the same order, always give exactly the same outputs and the same final state, on any run and any machine. |
+| **Non-deterministic** | Something outside the inputs can change the result: the time, randomness, the CPU, the operating system. |
+| **Sequence number** | The position of a message in the input line: 1, 2, 3, ... It decides which order came first. |
+| **Sequencer** | The part of an exchange that puts the messages from all gateways into one numbered line (see step 02). |
+| **Replay** | Feeding a recorded input log into the engine again to rebuild exactly the same state. |
+| **Fingerprint (hash)** | A short code computed from a whole file (for example with SHA-256). Change one character and the fingerprint changes, so two outputs can be compared by their fingerprints. |
+| **Golden file** | A small test input stored together with its expected output, written by hand. |
+| **Race condition** | When two threads touch the same data and the result depends on which one happens to run first. |
+
+#### 3.1 What determinism means
+
+Think of the engine as a machine with a memory. Each input changes the state a little and produces some events:
+
+```text
+state0 --(input 1)--> state1 --(input 2)--> state2 --(input 3)--> state3 ...
+              |                    |                    |
+           events               events               events
+```
+
+Determinism means each arrow is a pure rule: the next state and the events depend **only on the current state and the input**. Nothing else may matter: not the clock, not luck, not which CPU core ran it.
+
+Example: this input
+
+```text
+1  SELL  A  5 @ 101
+2  SELL  D  3 @ 101
+3  BUY   X  6 @ 102
+```
+
+must always produce exactly
+
+```text
+REST   A 5 @ 101
+REST   D 3 @ 101
+TRADE  X buys 5 from A at 101
+TRADE  X buys 1 from D at 101
+DONE   X fully filled
+```
+
+today and tomorrow, on the student's M2 and on the advisor's PC, a thousand times in a row, down to the last byte. If one run printed the trade with D first, the engine would not be slow but **wrong**: it would also break price-time priority, because A arrived first.
+
+#### 3.2 Why an exchange cares so much
+
+1. **Crash recovery (topic 4).** After a crash the input log is replayed to rebuild the book. This only works if the replay gives exactly the same book; otherwise traders' orders silently change.
+2. **Testing.** A test can say "this input must produce exactly these events". A non-deterministic engine would fail tests at random, and a real bug could not be told apart from noise.
+3. **Fair benchmarks (topic 2, rule 7).** Comparing v1 and v3 means feeding both the same workload and checking that they produce the same trades. Only then do the speed numbers mean anything.
+4. **Debugging and auditing.** When a trader asks "why did my order trade at 101?", or a bug appears after a million orders, the log is replayed and the same thing happens again, exactly. Real exchanges and regulators rely on this.
+
+#### 3.3 What can quietly break it
+
+Five candidate behaviours were discussed:
+
+| # | Behaviour | Breaks determinism? | Why | Fix |
+| --- | --- | --- | --- | --- |
+| 1 | Each trade gets a timestamp from `clock.now()` | **Yes** | the time is different on every run | the time comes **with the input** (stamped by the gateway or sequencer and recorded); the engine only copies it |
+| 2 | At the same price, a random order trades first | **Yes**, and it breaks price-time priority | chance decides the result | time priority comes from the **sequence number**; any randomness (the workload generator) lives outside the engine and uses a fixed seed |
+| 3 | Prices stored as `double` | **A correctness problem, and a risk to determinism** | most decimal prices cannot be stored exactly in binary, and rounding can differ between compilers, settings and CPUs | **integer ticks**: with a tick of 0.01, 101.10 is stored as 10110 (decision D5) |
+| 4 | Printing the book by looping over the hash map | **Yes** (the sneakiest) | a hash map has no meaningful order; it depends on the table size, the insert history and the library (libc++ on macOS, libstdc++ on Linux) | outputs come only from ordered structures (sorted levels, FIFO lists), or are sorted first |
+| 5 | Messages processed strictly in input order | **No: this is the rule itself** | the same order in gives the same result out | the sequencer fixes one order for all messages, and that order is what gets recorded |
+
+The floating-point problem, checked on the M2:
+
+```text
+0.1 + 0.2                    -> 0.30000000000000004   (0.1 + 0.2 == 0.3 is false)
+101.1 is really stored as    -> 101.0999999999999943156581139...
+adding 0.1 one thousand times -> 99.9999999999986      (not 100)
+100.9 + 0.2                  -> 101.10000000000001     (so a buy at 101.1 does not reach it)
+```
+
+Note on rule 1: reading the clock to **measure latency** (topic 2) is fine, because that number never changes what the engine does. The rule is about the engine's behaviour and outputs.
+
+More breakers:
+
+| Breaker | Why it breaks | Fix |
+| --- | --- | --- |
+| Ordering by memory address (e.g. sorting orders by their pointer) | memory is placed at different addresses on every run | order by sequence number or price, never by address |
+| Uninitialised memory (C++ undefined behaviour) | a variable that was never set holds whatever was in memory | always initialise; run tests with sanitizers (ASan, UBSan) |
+| Several threads touching the book | a race condition: whichever thread runs first wins | one thread does all matching (topic 5) |
+| Hidden inputs (a config re-read during the day, a command from the dashboard) | they change behaviour but are not in the log, so a replay cannot know them | everything that can change behaviour is an input message in the log |
+| A different engine version | replaying an old log with changed rules can give other results | record the engine version with the log |
+
+**The rule: the engine's outputs and state depend only on its input log, and nothing else.**
+
+| Allowed inside the engine | Must never affect the engine's behaviour |
+| --- | --- |
+| the input messages, in sequence order | the current clock time |
+| timestamps that came with the input | random numbers (unless seeded and part of the input) |
+| integer prices and quantities | floating-point prices |
+| ordered structures (sorted levels, FIFO lists) for every output | hash map iteration order, memory addresses |
+| one thread processing one message at a time | several threads racing each other |
+
+#### 3.4 How to test determinism
+
+Five checks, from simplest to strongest:
+
+1. **Run twice, compare.** Run the engine twice on the same input, write the events to two files, compare them byte by byte or by fingerprint. Pass = identical.
+2. **Golden files.** Small hand-written inputs with their expected events, stored in the repository. Every change to the engine must still reproduce them exactly. This checks correctness and determinism together.
+3. **Replay check.** Run a long input and print the final book in a defined order; start a fresh engine, replay the same log, print again. The two must be identical. This is a rehearsal for crash recovery (topic 4).
+4. **Different machines and builds.** Run on macOS and on Linux (GitHub Actions can do it automatically), in debug and release builds, and compare fingerprints. This catches hash-order and floating-point problems.
+5. **Seeded big workloads across versions (differential testing).** Generate 1,000,000 orders from a fixed seed, run v1 and v3, and compare their event fingerprints. Equal fingerprints prove that v3 is faster **and** gives exactly the same trades.
+
+Pass means an identical event stream **and** an identical final book, every time, everywhere.
+
+#### 3.5 Summary of topic 3
+
+- **Deterministic** = the same inputs in the same order always give the same outputs and the same final state.
+- It is what makes **crash recovery, testing, fair benchmarks and auditing** possible.
+- It is broken by anything outside the input: **the clock, randomness, floating point, hash map order, memory addresses, undefined behaviour, threads and hidden inputs**.
+- The rule: **outputs depend only on the input log**. Time comes with the input, prices are integer ticks, outputs come from ordered structures, one thread matches.
+- It is checked by **running twice, golden files, replay checks, cross-machine runs and differential testing** of v1 against v3.
+
+#### Check yourself (topic 3)
+
+<details><summary>1. Define determinism in one sentence.</summary>
+
+The same inputs, in the same order, always produce exactly the same outputs and the same final state.
+</details>
+
+<details><summary>2. Why can't the engine call clock.now() to timestamp trades, and what does it do instead?</summary>
+
+The time differs on every run, so a replay would produce different events. The timestamp is stamped on arrival by the gateway or sequencer, recorded with the input, and the engine copies it.
+</details>
+
+<details><summary>3. Why are prices stored as integer ticks?</summary>
+
+Floating point cannot store most decimal prices exactly (100.9 + 0.2 = 101.10000000000001), so price comparisons can be wrong, and rounding may differ between machines. Integer arithmetic is exact and identical everywhere.
+</details>
+
+<details><summary>4. The trades are all correct, but the printed book differs between macOS and Linux. What is a likely cause?</summary>
+
+The book was printed by iterating over a hash map, whose order depends on the library implementation. Print from the sorted levels and FIFO lists instead.
+</details>
+
+<details><summary>5. Is reading the clock to measure latency a problem for determinism?</summary>
+
+No, as long as the measured value never changes what the engine does.
+</details>
+
+<details><summary>6. How do we show that v3 gives exactly the same trades as v1?</summary>
+
+Run both on the same seeded workload and compare the fingerprints of their event streams (differential testing).
+</details>
+
+### Topics 4 and 5
 
 To be added as they are worked through.
 
@@ -491,7 +645,8 @@ To be added as they are worked through.
 - Which container holds the price levels: sorted array, balanced tree (`std::map`), or an array indexed directly by price? Decided in step 07, measured in v3.
 - Order-ID index: a hash map (works with any ID) or a direct-index array (needs engine-assigned sequential IDs)? Decided in step 07, measured in v3.
 - The seven measuring rules in 2.5 are the proposed benchmark rules; they are confirmed when v2 is designed.
+- Input format: which fields does each input message carry (sequence number, arrival timestamp, ...) so that the engine never needs its own clock? Decided in step 07.
 
 ## Next step
 
-→ Topic 3 of this step: determinism.
+→ Topic 4 of this step: crash recovery.

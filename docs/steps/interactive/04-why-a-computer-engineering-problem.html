@@ -188,6 +188,20 @@
   .mem .line i { background: var(--sell-soft); color: var(--sell); } .mem .line s { background: var(--surface-2); }
   .mem.scattered .line { border-color: var(--border); }
   .mem .more { color: var(--muted); }
+
+  /* topic 3 */
+  pre.labin { margin: 4px 0 0; font-size: 12.5px; }
+  .brk { display: grid; gap: 8px; }
+  .labcols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+  ol.evl { list-style: none; margin: 0; padding: 8px 10px; background: var(--surface-2); border-radius: 8px; font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; min-height: 120px; }
+  ol.evl li { padding: 0 4px; border-radius: 4px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  ol.evl li.diff { background: var(--sell-soft); color: var(--sell); font-weight: 600; }
+  .fp { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); margin-top: 6px; }
+  .fp b { color: var(--text); }
+  .verdict { display: grid; gap: 6px; margin-top: 12px; font-size: 14px; }
+  .pill2 { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 99px; margin-left: 6px; }
+  .pill2.same { background: var(--buy-soft); color: var(--buy); } .pill2.diff { background: var(--sell-soft); color: var(--sell); }
+  #lab-why .key { margin-bottom: 0; }
   @media (max-width: 600px) {
     dl.fields { grid-template-columns: 1fr; gap: 2px; } dl.fields dd { margin-bottom: 8px; }
     table.units th:nth-child(3), table.units td:nth-child(3) { display: none; }
@@ -197,6 +211,7 @@
     .layout { grid-template-columns: 1fr; padding: 20px 16px 60px; gap: 0; }
     nav { position: static; margin-bottom: 8px; } nav .links { display: flex; flex-wrap: wrap; gap: 2px; }
     .below { grid-template-columns: 1fr; }
+    .labcols { grid-template-columns: 1fr; }
     table.example th:nth-child(4), table.example td:nth-child(4), table.example th:nth-child(5), table.example td:nth-child(5) { display: none; }
     .lvl { grid-template-columns: 1fr; gap: 4px; }
   }
@@ -227,6 +242,13 @@
       <a href="#lat-hidden">2.4 · Hidden costs</a>
       <a href="#lat-measure">2.5 · Measuring honestly</a>
       <a href="#lat-check">Check yourself</a>
+      <div class="grp-h">Topic 3 · Determinism</div>
+      <a href="#det-start">3.0 · Words first</a>
+      <a href="#det-what">3.1 · What it means</a>
+      <a href="#det-why">3.2 · Why it matters</a>
+      <a href="#det-break">3.3 · What breaks it</a>
+      <a href="#det-test">3.4 · How to test it</a>
+      <a href="#det-check">Check yourself</a>
       <div class="grp-h">Next</div>
       <a href="#next">What comes next</a>
     </div>
@@ -234,7 +256,7 @@
 
   <main>
     <h1>Why a matching engine is a computer engineering problem</h1>
-    <p class="lead">Matching orders sounds simple: put buyers and sellers together. The hard part is doing it correctly, very fast, for every single message. This page works through the first two difficulties: <b>topic 1</b>, the data structures behind the order book, and <b>topic 2</b>, latency: what "fast" means and where the time actually goes.</p>
+    <p class="lead">Matching orders sounds simple: put buyers and sellers together. The hard part is doing it correctly, very fast, for every single message. This page works through the first two difficulties: <b>topic 1</b>, the data structures behind the order book; <b>topic 2</b>, latency: what "fast" means and where the time goes; and <b>topic 3</b>, determinism: getting exactly the same result every time.</p>
 
     <!-- START HERE -->
     <h2 id="start"><span class="num">0</span>Start here: how to read this page</h2>
@@ -315,8 +337,8 @@
       <tbody>
         <tr><td>1</td><td><b>Data structures</b></td><td>How does the engine keep the book so every operation is fast?</td><td>Done · this page</td></tr>
         <tr><td>2</td><td><b>Latency</b></td><td>What does "fast" mean, and where does the time go?</td><td>Done · this page</td></tr>
-        <tr><td>3</td><td>Determinism</td><td>Why must the same input always give the same trades?</td><td class="muted">Next</td></tr>
-        <tr><td>4</td><td>Crash recovery</td><td>How do an event log and replay rebuild the exact state?</td><td class="muted">Planned</td></tr>
+        <tr><td>3</td><td><b>Determinism</b></td><td>Why must the same input always give the same trades?</td><td>Done · this page</td></tr>
+        <tr><td>4</td><td>Crash recovery</td><td>How do an event log and replay rebuild the exact state?</td><td class="muted">Next</td></tr>
         <tr><td>5</td><td>Concurrency</td><td>Why do engines match on a single thread?</td><td class="muted">Planned</td></tr>
       </tbody>
     </table></div>
@@ -733,8 +755,138 @@ debug   (-O0): ~66,000 µs</pre>
     <details><summary>7. Why can't a single hash map lookup be timed on its own on the M2?</summary><p>The timer moves in steps of 41.67 ns and reading it costs about 18 ns, while a lookup takes a few ns. Time many lookups and divide.</p></details>
     <details><summary>8. Why warm up, and why never benchmark a debug build?</summary><p>The first run was 5× slower in our test, and the debug build about 50× slower than the release build. Neither says anything about the real engine.</p></details>
 
+    <!-- ======================= TOPIC 3: DETERMINISM ======================= -->
+    <div class="topic-hd" id="t3"><span class="muted">Topic 3 of 5</span><h2>Determinism: exactly the same result, every time</h2>
+      <p>Topics 1 and 2 were about being <b>fast</b>. This one is about being <b>exactly right, every single time</b>. Crash recovery (topic 4), testing, and comparing v1 with v3 all rest on it.</p></div>
+
+    <h2 id="det-start"><span class="num">3.0</span>Start here: the words this topic uses</h2>
+    <div class="grid2">
+      <div class="card"><h3>The engine as a machine</h3>
+        <dl class="fields">
+          <dt>input</dt><dd>every message the engine receives, in order: new orders, cancels</dd>
+          <dt>output</dt><dd>everything it produces: the events (trades, "waits in the book", "cancelled")</dd>
+          <dt>state</dt><dd>what it remembers between messages: the whole order book</dd>
+          <dt>sequence number</dt><dd>a message's position in the input line (1, 2, 3, …). It decides which order came first.</dd>
+          <dt>sequencer</dt><dd>the part of an exchange that puts messages from all gateways into one numbered line (step 02)</dd>
+        </dl></div>
+      <div class="card"><h3>Same or different</h3>
+        <dl class="fields">
+          <dt>deterministic</dt><dd><b>the same inputs, in the same order, always give exactly the same outputs and final state</b>, on any run and any machine</dd>
+          <dt>non-deterministic</dt><dd>something outside the inputs changes the result: the time, chance, the CPU, the operating system</dd>
+          <dt>replay</dt><dd>feeding a recorded input log into the engine again to rebuild exactly the same state</dd>
+          <dt>fingerprint</dt><dd>a short code (a hash, e.g. SHA-256) computed from a whole output. Change one character and it changes.</dd>
+          <dt>golden file</dt><dd>a small test input stored with its expected output, written by hand</dd>
+          <dt>race condition</dt><dd>two threads touch the same data and the result depends on which runs first</dd>
+        </dl></div>
+    </div>
+
+    <h2 id="det-what"><span class="num">3.1</span>What determinism means</h2>
+    <p>Think of the engine as a machine with a memory. Each input changes the state a little and produces some events:</p>
+<pre>state₀ ──(input 1)──► state₁ ──(input 2)──► state₂ ──(input 3)──► state₃ …
+               │                   │                    │
+            events              events               events</pre>
+    <p>Determinism means every arrow is a <b>pure rule</b>: the next state and the events depend <b>only on the current state and the input</b>. Not the clock, not luck, not which CPU core ran it.</p>
+    <div class="grid2">
+      <div class="card"><h3>This input…</h3>
+<pre>1  SELL  A  5 @ 101
+2  SELL  D  3 @ 101
+3  BUY   X  6 @ 102</pre></div>
+      <div class="card"><h3>…must always give exactly this</h3>
+<pre>REST   A 5 @ 101
+REST   D 3 @ 101
+TRADE  X buys 5 from A at 101
+TRADE  X buys 1 from D at 101
+DONE   X fully filled</pre></div>
+    </div>
+    <p>Today and tomorrow, on your Mac and on the advisor's PC, a thousand times in a row, down to the last byte. If one run printed the trade with D first, the engine would not be slow but <b>wrong</b>: A arrived first, so A must trade first.</p>
+
+    <h2 id="det-why"><span class="num">3.2</span>Why an exchange cares so much</h2>
+    <div class="grid2">
+      <div class="card"><h3>1 · Crash recovery</h3>After a crash the input log is replayed to rebuild the book (topic 4). That only works if the replay gives <i>exactly</i> the same book; otherwise traders' orders silently change.</div>
+      <div class="card"><h3>2 · Testing</h3>A test can say "this input must produce exactly these events". A non-deterministic engine fails tests at random, and a real bug can't be told apart from noise.</div>
+      <div class="card"><h3>3 · Fair benchmarks</h3>Comparing v1 and v3 means feeding both the same workload and checking that they make the same trades (topic 2, rule 7). Only then do the speed numbers mean anything.</div>
+      <div class="card"><h3>4 · Debugging and auditing</h3>"Why did my order trade at 101?" Replay the log and watch it happen again, exactly. Real exchanges and regulators rely on this.</div>
+    </div>
+
+    <h2 id="det-break"><span class="num">3.3</span>What can quietly break it</h2>
+    <p>Five behaviours were discussed. Four break determinism; one is the rule itself.</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>#</th><th>Behaviour</th><th>Breaks it?</th><th>Why</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Each trade gets a timestamp from <code>clock.now()</code></td><td class="bad">Yes</td><td>the time is different on every run</td><td>the time comes <b>with the input</b>: stamped on arrival by the gateway or sequencer and recorded; the engine only copies it</td></tr>
+        <tr><td>2</td><td>At the same price, a random order trades first</td><td class="bad">Yes, and it breaks price-time priority</td><td>chance decides</td><td>time priority comes from the <b>sequence number</b>; randomness lives outside the engine with a fixed seed</td></tr>
+        <tr><td>3</td><td>Prices stored as <code>double</code></td><td class="bad">A correctness problem, and a risk</td><td>most decimal prices can't be stored exactly in binary; rounding can differ between compilers and CPUs</td><td><b>integer ticks</b>: 101.10 is stored as 10110 (decision D5)</td></tr>
+        <tr><td>4</td><td>Printing the book by looping over the hash map</td><td class="bad">Yes, the sneakiest</td><td>a hash map has no meaningful order: it depends on table size, insert history and library (macOS vs Linux)</td><td>outputs come only from ordered structures (sorted levels, FIFO lists)</td></tr>
+        <tr><td>5</td><td>Messages processed strictly in input order</td><td class="good">No: this is the rule</td><td>the same order in gives the same result out</td><td>the sequencer fixes one order, and that order is recorded</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="card"><h3>Floating point, checked on your Mac</h3>
+<pre>0.1 + 0.2       → 0.30000000000000004
+101.1 is stored → 101.0999999999999943…
+0.1 added 1000× → 99.9999999999986
+100.9 + 0.2     → 101.10000000000001</pre>
+        <p class="note">The last line means a buy at 101.10 does not reach a sell computed as 100.90 + 0.20, even though both "are" 101.10. The lab below uses exactly this case.</p></div>
+      <div class="card"><h3>Measuring is fine</h3>Reading the clock to <b>measure latency</b> (topic 2) does not break determinism, because that number never changes what the engine does. The rule is about the engine's behaviour and outputs.</div>
+    </div>
+
+    <h3 style="margin-top:22px">Try it: the determinism lab</h3>
+    <p>The same 10 input messages run twice: once on your Mac, once on a Linux server. Next to them is the <b>expected output</b>, a golden file written by hand. Switch a breaker on and press <b>Run both again</b>. Lines that differ from the expected output turn red.</p>
+    <div class="card">
+      <div class="grid2" style="margin-bottom:0">
+        <div><div class="side-h">Input (the same for both runs)</div><pre class="labin" id="lab-input"></pre></div>
+        <div><div class="side-h">Breakers</div>
+          <div class="brk">
+            <label class="chk"><input type="checkbox" data-brk="clock"> 1 · trade timestamps from <code>clock.now()</code></label>
+            <label class="chk"><input type="checkbox" data-brk="random"> 2 · random choice at the same price</label>
+            <label class="chk"><input type="checkbox" data-brk="float"> 3 · prices as floating point</label>
+            <label class="chk"><input type="checkbox" data-brk="hash"> 4 · print the book by looping over the hash map</label>
+          </div>
+          <div class="ops" style="margin-top:12px"><button class="btn primary" id="lab-run">Run both again</button><button class="btn" id="lab-reset">All breakers off</button></div>
+          <div id="lab-verdict" class="verdict"></div>
+        </div>
+      </div>
+      <div class="labcols">
+        <div><div class="side-h">Run 1 · your Mac</div><ol class="evl" id="lab-r1"></ol><div class="fp" id="lab-f1"></div></div>
+        <div><div class="side-h">Run 2 · a Linux server</div><ol class="evl" id="lab-r2"></ol><div class="fp" id="lab-f2"></div></div>
+        <div><div class="side-h">Expected (golden file)</div><ol class="evl" id="lab-ex"></ol><div class="fp" id="lab-fe"></div></div>
+      </div>
+      <div id="lab-why"></div>
+    </div>
+
+    <h3 style="margin-top:22px">More breakers</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Breaker</th><th>Why it breaks</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Ordering by memory address (e.g. sorting orders by pointer)</td><td>memory sits at different addresses on every run</td><td>order by sequence number or price, never by address</td></tr>
+        <tr><td>Uninitialised memory (C++ undefined behaviour)</td><td>a variable never set holds whatever was in memory</td><td>always initialise; test with sanitizers (ASan, UBSan)</td></tr>
+        <tr><td>Several threads touching the book</td><td>a race condition: whichever thread runs first wins</td><td>one thread does all matching (topic 5)</td></tr>
+        <tr><td>Hidden inputs (a config re-read, a dashboard command)</td><td>they change behaviour but are not in the log, so a replay can't know them</td><td>everything that changes behaviour is an input message in the log</td></tr>
+        <tr><td>A different engine version</td><td>replaying an old log with changed rules can give other results</td><td>record the engine version with the log</td></tr>
+      </tbody>
+    </table></div>
+    <div class="key"><b>The rule: the engine's outputs and state depend only on its input log, and nothing else.</b> Time comes with the input, prices are integer ticks, every output comes from ordered structures, and one thread does the matching.</div>
+
+    <h2 id="det-test"><span class="num">3.4</span>How to test determinism</h2>
+    <div class="grid2">
+      <div class="card"><h3>1 · Run twice, compare</h3>Same input, two runs, events written to two files, compared byte by byte or by fingerprint. Pass = identical. (This is what the lab does.)</div>
+      <div class="card"><h3>2 · Golden files</h3>Small hand-written inputs with their expected events, stored in the repository. Every change to the engine must still reproduce them exactly.</div>
+      <div class="card"><h3>3 · Replay check</h3>Run a long input and print the final book; start a fresh engine, replay the log, print again. The two must match: a rehearsal for crash recovery.</div>
+      <div class="card"><h3>4 · Other machines and builds</h3>macOS and Linux (GitHub Actions can run this automatically), debug and release builds, same fingerprints. Catches hash-order and floating-point problems.</div>
+      <div class="card"><h3>5 · Differential testing</h3>1,000,000 orders from a fixed seed through v1 and v3. Equal fingerprints prove v3 is faster <b>and</b> makes exactly the same trades.</div>
+    </div>
+    <p><b>Pass</b> means an identical event stream <b>and</b> an identical final book, every time, everywhere.</p>
+
+    <h2 id="det-check"><span class="num">?</span>Check yourself (topic 3)</h2>
+    <details><summary>1. Define determinism in one sentence.</summary><p>The same inputs, in the same order, always produce exactly the same outputs and the same final state.</p></details>
+    <details><summary>2. Why can't the engine call clock.now() to timestamp trades, and what does it do instead?</summary><p>The time differs on every run, so a replay would produce different events. The time is stamped on arrival by the gateway or sequencer, recorded with the input, and the engine copies it.</p></details>
+    <details><summary>3. Why are prices stored as integer ticks?</summary><p>Floating point can't store most decimal prices exactly (100.9 + 0.2 = 101.10000000000001), so comparisons can be wrong and rounding may differ between machines. Integers are exact everywhere. Try breaker 3 in the lab.</p></details>
+    <details><summary>4. All trades are correct, but the printed book differs between macOS and Linux. Likely cause?</summary><p>The book was printed by looping over a hash map. Print from the sorted levels and FIFO lists instead. Try breaker 4 in the lab.</p></details>
+    <details><summary>5. Is reading the clock to measure latency a problem?</summary><p>No, as long as the measured value never changes what the engine does.</p></details>
+    <details><summary>6. How do we show that v3 makes exactly the same trades as v1?</summary><p>Run both on the same seeded workload and compare the fingerprints of their outputs (differential testing).</p></details>
+
     <h2 id="next"><span class="num">→</span>What comes next</h2>
-    <p><b>Topic 3: determinism.</b> Why the same orders must always produce exactly the same trades, and what can quietly break that (time, randomness, hash map ordering, floating-point prices). It is also what makes rule 7 above possible: comparing versions on the same workload.</p>
+    <p><b>Topic 4: crash recovery.</b> How an event log, snapshots and replay bring the engine back to exactly the state it had before a crash, without losing or changing a single trade. It is the place where determinism pays off.</p>
     <p class="muted">The Markdown version of this step is <code>docs/steps/04-why-a-computer-engineering-problem.md</code>.</p>
   </main>
 </div>
@@ -1201,6 +1353,75 @@ debug   (-O0): ~66,000 µs</pre>
   document.querySelectorAll("#q-util button").forEach((b) => b.onclick = () => { qUtil = parseFloat(b.dataset.v); document.querySelectorAll("#q-util button").forEach((x) => x.classList.toggle("on", x === b)); qRender(); });
   $("q-burst").onchange = qRender;
   qRender();
+
+  /* ================= Topic 3: determinism lab ================= */
+  const LAB_INPUT = [
+    { seq: 1, side: "sell", id: "A", qty: 5, px: "101.00" },
+    { seq: 2, side: "sell", id: "D", qty: 3, px: "101.00" },
+    { seq: 3, side: "sell", id: "E", qty: 2, px: "101.00" },
+    { seq: 4, side: "sell", id: "B", qty: 4, px: "100.90+0.20" },
+    { seq: 5, side: "sell", id: "C", qty: 2, px: "103.00" },
+    { seq: 6, side: "buy", id: "G", qty: 7, px: "100.00" },
+    { seq: 7, side: "buy", id: "H", qty: 4, px: "99.00" },
+    { seq: 8, side: "buy", id: "X", qty: 6, px: "101.00" },
+    { seq: 9, side: "buy", id: "Y", qty: 7, px: "101.10" },
+    { seq: 10, print: true },
+  ];
+  $("lab-input").textContent = LAB_INPUT.map((m) => m.print ? `${String(m.seq).padStart(2)}  PRINT BOOK` :
+    `${String(m.seq).padStart(2)}  ${m.side.toUpperCase().padEnd(4)}  ${m.id}  ${m.qty} @ ${m.px.includes("+") ? m.px.replace("+", " + ") + "   (= 101.10)" : m.px}`).join("\n");
+  function fnv(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, "0"); }
+  function labRun(o, machine, rnd, clockBase) {
+    const price = (s) => s.split("+").map((x) => o.float ? parseFloat(x) : Math.round(parseFloat(x) * 100)).reduce((a, b) => a + b, 0);
+    const show = (v) => (o.float ? v : v / 100).toFixed(2);
+    const book = { buy: [], sell: [] }, out = []; let tick = 0;
+    const stamp = () => { const us = Math.floor(clockBase + (tick++) * 3.7 + rnd() * 2) % 1000000; return `  time 09:30:00.${String(us).padStart(6, "0")}`; };
+    for (const m of LAB_INPUT) {
+      if (m.print) {
+        let rest = [...book.sell.sort((a, b) => a.p - b.p || a.seq - b.seq).map((x) => ["ask", x]), ...book.buy.sort((a, b) => b.p - a.p || a.seq - b.seq).map((x) => ["bid", x])];
+        if (o.hash) rest = rest.sort((a, b) => fnv(machine + a[1].id).localeCompare(fnv(machine + b[1].id)));
+        rest.forEach(([w, x]) => out.push(`BOOK   ${w} ${x.id} ${x.q} @ ${show(x.p)}`));
+        continue;
+      }
+      const p = price(m.px), opp = m.side === "buy" ? "sell" : "buy"; let rem = m.qty;
+      while (rem > 0) {
+        const ok = book[opp].filter((x) => (m.side === "buy" ? x.p <= p : x.p >= p));
+        if (!ok.length) break;
+        const bp = m.side === "buy" ? Math.min(...ok.map((x) => x.p)) : Math.max(...ok.map((x) => x.p));
+        const lvl = ok.filter((x) => x.p === bp).sort((a, b) => a.seq - b.seq);
+        const r = o.random ? lvl[Math.floor(rnd() * lvl.length)] : lvl[0];
+        const t = Math.min(rem, r.q); rem -= t; r.q -= t;
+        const buyer = m.side === "buy" ? m.id : r.id, seller = m.side === "buy" ? r.id : m.id;
+        out.push(`TRADE  ${buyer} buys ${t} from ${seller} at ${show(bp)}${o.clock ? stamp() : ""}`);
+        if (r.q === 0) book[opp].splice(book[opp].indexOf(r), 1);
+      }
+      if (rem === m.qty || rem > 0) { if (rem > 0) { book[m.side].push({ id: m.id, q: rem, p, seq: m.seq }); out.push(`REST   ${m.id} ${rem} @ ${show(p)}`); } }
+      if (rem === 0) out.push(`DONE   ${m.id} fully filled`);
+    }
+    return out;
+  }
+  const LAB_EXPECTED = labRun({}, "golden", () => 0, 0);
+  function labRender() {
+    const o = {}; document.querySelectorAll("[data-brk]").forEach((c) => (o[c.dataset.brk] = c.checked));
+    const r1 = labRun(o, "libc++ (macOS)", rng((Math.random() * 1e9) | 0), performance.now() * 1000);
+    const r2 = labRun(o, "libstdc++ (Linux)", rng((Math.random() * 1e9) | 0), performance.now() * 1000 + 120000 + Math.random() * 50000);
+    const list = (el, lines) => { $(el).innerHTML = lines.map((l, i) => `<li class="${l !== LAB_EXPECTED[i] ? "diff" : ""}">${esc(l)}</li>`).join(""); };
+    list("lab-r1", r1); list("lab-r2", r2); list("lab-ex", LAB_EXPECTED);
+    const f1 = fnv(r1.join("\n")), f2 = fnv(r2.join("\n")), fe = fnv(LAB_EXPECTED.join("\n"));
+    $("lab-f1").innerHTML = `fingerprint <b>${f1}</b>`; $("lab-f2").innerHTML = `fingerprint <b>${f2}</b>`; $("lab-fe").innerHTML = `fingerprint <b>${fe}</b>`;
+    const pill = (same) => `<span class="pill2 ${same ? "same" : "diff"}">${same ? "same" : "different"}</span>`;
+    $("lab-verdict").innerHTML = `<div>Run 1 vs Run 2 ${pill(f1 === f2)}</div><div>Run 1 vs expected ${pill(f1 === fe)}</div><div>Run 2 vs expected ${pill(f2 === fe)}</div>`;
+    const why = [];
+    if (o.clock) why.push("<b>Breaker 1:</b> every trade line carries the time at which that run happened, so the two runs can never be identical, even though the trades are the same.");
+    if (o.random) why.push(`<b>Breaker 2:</b> X buys at 101.00, where A, D and E wait. Instead of A first (it arrived first), each run picks by chance, so who trades with whom changes from run to run.${f1 === f2 && !o.clock && !o.hash ? " This time both runs happened to pick the same; press Run both again." : ""}`);
+    if (o.float) why.push("<b>Breaker 3:</b> B's price was computed as 100.90 + 0.20 = 101.10000000000001, so Y's buy at 101.10 does not reach it. Y rests instead of trading with B, on both runs. Deterministic here, but <b>wrong</b>: the golden file shows the trade. It even prints as 101.10, which hides the bug: the final book shows a buyer Y and a seller B both \"at 101.10\" that never traded.");
+    if (o.hash) why.push("<b>Breaker 4:</b> all trades are right, but the final BOOK lines come out in hash map order, which differs between the macOS and Linux libraries.");
+    $("lab-why").innerHTML = why.length ? `<div class="key" style="margin-top:14px">${why.join("<br>")}</div>`
+      : `<div class="key" style="margin-top:14px"><b>All breakers off:</b> both runs match the golden file line by line, and the three fingerprints are equal. That is what "deterministic" looks like. Now switch a breaker on.</div>`;
+  }
+  document.querySelectorAll("[data-brk]").forEach((c) => (c.onchange = labRender));
+  $("lab-run").onclick = labRender;
+  $("lab-reset").onclick = () => { document.querySelectorAll("[data-brk]").forEach((c) => (c.checked = false)); labRender(); };
+  labRender();
 })();
 </script>
 </body>

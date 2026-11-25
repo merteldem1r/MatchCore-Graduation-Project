@@ -24,7 +24,7 @@ Steps are **high-level and project-wide**: the milestones in *understanding* the
 | 01 | [Project idea](01-project-idea.md) | 2026-10-16 | Done | [kickoff page](interactive/01-project-kickoff.html) |
 | 02 | [How an exchange works](02-how-an-exchange-works.md) | 2026-10-17 | Done | [with order-book simulator](interactive/02-how-an-exchange-works.html) |
 | 03 | [Project name & repository structure](03-name-and-repo-structure.md) | 2026-10-17 | Done | — |
-| 04 | [Why this is a computer engineering problem](04-why-a-computer-engineering-problem.md) | after the proposal | In progress (topics 1 and 2 of 5 done) | [with live order book, percentile explorer and queue simulator](interactive/04-why-a-computer-engineering-problem.html) |
+| 04 | [Why this is a computer engineering problem](04-why-a-computer-engineering-problem.md) | after the proposal | In progress (topics 1 to 3 of 5 done) | [with live order book, latency tools and determinism lab](interactive/04-why-a-computer-engineering-problem.html) |
 | 05 | Similar projects & research material | after the proposal | Planned | — |
 | 06 | Tech stack | after the proposal | Planned | — |
 | 07 | Scope & architecture (what v1 is; its detailed design goes to `application/engine/`) | after the proposal | Planned | — |
